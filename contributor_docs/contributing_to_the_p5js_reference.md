@@ -1,22 +1,51 @@
 <!-- Write and edit p5.js reference using the right format. -->
 
+<!--
+// --- 47 char max width for code examples ----
+-->
+
 # Contributing to the p5.js Reference
 
-In p5.js, we author the code reference you see on the [reference](https://p5js.org/reference/) page on the p5.js website by including them alongside the library’s source code as specialized comments. These reference comments include the description, the function’s signature (its parameters and return value), and usage examples. In other words, the content on each p5.js function/variable’s reference page is built from the reference comments in the source code.
+## Table of Contents
+* [A quick introduction to reference comments](#a-quick-introduction-to-reference-comments)
+* [Reference comment blocks for functions](#reference-comment-blocks-for-functions)
+* [Reference comment blocks for p5.js variables](#reference-comment-blocks-for-p5js-variables)
+* [Adding examples](#adding-examples)
+* [Using assets in examples and descriptions](#using-assets-in-examples-and-descriptions)
+* [Less common JSDoc tags](#less-common-jsdoc-tags)
+* [Generating and previewing the reference](#generating-and-previewing-the-reference)
+* [Linting the comments to find errors](#linting-the-comments-to-find-errors)
+* [Next steps](#next-steps)
+
+
+In p5.js, we author the code reference you see on the [reference](https://beta.p5js.org/reference/) page on the p5.js website by including specialized comments alongside the library’s source code. For each p5 function, for example, a reference comment includes the name and description of the function, details of its parameters and return value, and examples of use. The content you see on each p5.js function/variable’s reference page is built from these reference comments in the source code.
 
 This document will show you how to write and format the reference comments so that they can eventually be rendered onto the website correctly. You should follow this guide whenever you are editing or writing a reference for any p5.js function or variable.
 
+If you're looking to learn about the build process that generates the reference documentation from the source-code comments, see instead [Reference generation process](./reference_generation_process/)
 
-## A quick introduction to how reference comments work
+### A note about p5.js versions
+
+This document describes how to work with p5.js version 2.x, whose reference documentation is currently being hosted at https://beta.p5js.org/reference/.  If you are documenting code for p5.js v1.x, you should consult [this document](https://p5js.org/contribute/contributing_to_the_p5js_reference/), instead, as some of the syntax and processes are different.
+
+(Most of the differences are detailed in [this appendix](#doc-differences-v1-to-v2)).
+
+## A quick introduction to reference comments
 
 When you look at the source code of p5.js, you will see many lines in the library being reference comments; they look like this:
 
-```
+```js
 /**
- * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
- * in creative coding. The values returned oscillate between -1 and 1 as the
- * input angle increases. `sin()` takes into account the current
- * <a href="#/p5/angleMode">angleMode</a>.
+ * Calculates the sine of an angle.
+ *
+ * `sin()` is useful for many geometric tasks
+ * in creative coding. The values returned
+ * oscillate between -1 and 1 as the input
+ * angle increases. `sin()` calculates the
+ * sine of an angle, using radians by default,
+ * or according to the <a
+ * href="#/p5/angleMode">angleMode()</a>
+ * setting (RADIANS or DEGREES).
  *
  * @method sin
  * @param  {Number} angle the angle.
@@ -25,65 +54,233 @@ When you look at the source code of p5.js, you will see many lines in the librar
  * @example
  * <div>
  * <code>
- * function draw() {
- *   background(200);
- *
- *   let t = frameCount;
- *   let x = 50;
- *   let y = 30 * sin(t * 0.05) + 50;
- *   line(x, 50, x, y);
- *   circle(x, y, 20);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
  *   describe('A white ball on a string oscillates up and down.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
  * function draw() {
- *   let x = frameCount;
- *   let y = 30 * sin(x * 0.1) + 50;
- *   point(x, y);
+ *   background(200);
  *
- *   describe('A series of black dots form a wave pattern.');
+ *   // Calculate the coordinates.
+ *   let x = 50;
+ *   let y = 30 * sin(frameCount * 0.05) + 50;
+ *
+ *   // Draw the oscillator.
+ *   line(50, y, x, y);
+ *   circle(x, y, 20);
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   describe('A series of black dots form a wave pattern.');
+ * }
+ *
  * function draw() {
- *   let t = frameCount;
- *   let x = 30 * cos(t * 0.1) + 50;
- *   let y = 10 * sin(t * 0.2) + 50;
+ *   // Calculate the coordinates.
+ *   let x = frameCount;
+ *   let y = 30 * sin(x * 0.1) + 50;
+ *
+ *   // Draw the point.
  *   point(x, y);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
  *
  *   describe('A series of black dots form an infinity symbol.');
+ * }
+ *
+ * function draw() {
+ *   // Calculate the coordinates.
+ *   let x = 30 * cos(frameCount * 0.1) + 50;
+ *   let y = 10 * sin(frameCount * 0.2) + 50;
+ *
+ *   // Draw the point.
+ *   point(x, y);
  * }
  * </code>
  * </div>
  */
 ```
 
-They are usually followed by the actual JavaScript code that defines the function. Reference comments always start with `/**` and end with `*/`, with each line in between the two starting with `*`.
+These reference comments are usually followed by the actual JavaScript code that defines the function. Reference comments always start with `/**` and end with `*/`, with each line in between the two starting with `*`.  
 
-Anything in a block in this manner will be interpreted as reference documentation. You may be familiar with this style of code comments through [JSDoc](https://jsdoc.app/). While p5.js does not use JSDoc, it uses a very similar tool called [YUIDoc](https://yui.github.io/yuidoc/), which has a very similar reference syntax. In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next.
+Anything in a block in this manner will be interpreted as reference documentation. These follow a format called [JSDoc](https://jsdoc.app/).
 
+In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next.
 
-## Reference comments block
+Note that block comments starting with `/*` rather than `/**` will be _ignored_ and won't be used for the reference (even though they may look otherwise identical in your editor).
 
-Let’s break down the reference comments block above for the `sin()` function and see what each section does. You can compare what you see in the comments here and what you can see on the reference page for [`sin()`](https://p5js.org/reference/p5/sin/).
+Note that p5 v1.x does _not_ use JSDoc syntax but a slightly  modified [syntax called YUIDoc](https://yui.github.io/yuidoc/syntax/index.html).  In practice the syntaxes are largely compatible but there are some differences.  You can read more in [this appendix](#doc-differences-v1-to-v2). We'll focus only on reference comments as they should be written for p5 v2.x.
 
-```
+## Reference comment blocks for functions
+
+In abstract, a comment block for a p5 function typically looks as follows.  (We've included the tags that will mark each section.  The actual syntax will be shown later).
+
+```js
 /**
- * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
- * in creative coding. The values returned oscillate between -1 and 1 as the
- * input angle increases. `sin()` takes into account the current
- * <a href="#/p5/angleMode">angleMode</a>.
+ * One-line description of the function.
+ *
+ * More description of the function behavior.
+ *
+ * The name of function - with @method
+ * Details of function parameters - with @param
+ * Detail of return value - with @return
+ *
+ * One or more examples of use - with @example
+ */
 ```
 
-At the very top of the comment is the text description of the function. This description can contain both markdown syntax and HTML. The description should be concise and describe what the function does and, if necessary, some details about its quirks or behaviors.
+Let’s break down the reference comment block we saw earlier for the `sin()` function and see what each section does. You can compare what you see in the comment block here with what you can see on the published [reference page for `sin()`](https://beta.p5js.org/reference/p5/sin/).
+
+(You might later also want to look at the most up-to-date source code and documentation comments for `sin` in the p5 repo, [here in /src/math/trigonometry.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/trigonometry.js).  Search for `@method sin` for the start of the comment block and `fn.sin` for the start of the function code.)
+
+
+### Describing the function
+
+Example: 
+
+```js
+/**
+ * Calculates the sine of an angle.
+ *
+ * `sin()` is useful for many geometric tasks
+ * in creative coding. The values returned
+ * oscillate between -1 and 1 as the input
+ * angle increases. `sin()` calculates the
+ * sine of an angle, using radians by default,
+ * or according to the <a
+ * href="#/p5/angleMode">angleMode()</a>
+ * setting (RADIANS or DEGREES).
+ * ...further description omitted...
+```
+
+At the very top of the comment is the text description of the function. The description should be concise and describe what the function does and, if necessary, some details about its quirks or behaviors.
+
+This description can contain both [markdown syntax](https://daringfireball.net/projects/markdown/syntax) and [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements). In the above example we see examples of both:
+
+* Markdown: The backtick characters around the function name, `sin()`, will cause it to be presented as a snippet of code.
+* Markdown: The blank line will be preserved.
+* HTML: The use of the html anchor tag `<a/>` makes `angleMode()` a clickable link to navigate to another page of documentation.  See [linking](#linking), later.
+
+In some places, you may see the  `@description` tag used.  It explicitly marks the description section and is only actually necessary if the description text isn't placed at the very beginning of the JSDoc comment.
+
+[Here's the JSDoc documentation on this description section](https://jsdoc.app/tags-description).
+
+#### The first sentence of the description
+
+The first sentence in the description, in particular, should concisely summarize what the function does.  It will almost always be necessary to omit detail here. 
+
+This first sentence will sometimes be presented alone with the function name (e.g. in [the function list](https://beta.p5js.org/reference/#Shape) on the front page of the reference website, where it can help the reader understand quickly if the function is what they're looking for.
+
+**Examples of first sentences of function descriptions**
+
+The following examples are all taken directly from the p5.js codebase, from the description of functions.  They demonstrate that even complex functions can have a short first sentence description.
+
+```
+Creates a canvas element on the web page.
+
+Sets the color used to draw points, lines, and the outlines of shapes.
+
+Stops the code in <a href="#/p5/draw">draw()</a> from running repeatedly.
+
+Creates a new <a href="#/p5.Element">p5.Element</a> object.   
+
+Creates a <a href="#/p5.Graphics">p5.Graphics</a> object.
+
+Translates the coordinate system.
+
+Draws an image to the canvas.
+
+Applies an image filter to the canvas.
+
+A function that's called once when any key is pressed.
+
+Calculates the distance between two points.
+
+Calculates the magnitude, or length, of a vector.
+
+Re-maps a number from one range to another.
+
+Returns a random number or a random element from an array.
+
+Sets or gets the current text size.
+
+Sets the position and orientation of the current camera in a 3D sketch.
+
+Creates a new 2D unit vector with a random heading.
+
+Multiplies a vector by a scalar and returns a new vector.
+
+```
+
+#### <a id="linking"></a>Linking to another function or variable
+
+A hyperlink HTML element - with the `a` tag) can be used within a function description to link to the documentation of a relevant function or variable.
+
+The url should be of this "fragment" or "hash" form: `#/p5/ + function_or_variable_name`, e.g. `#/p5/circle`, `#/p5/DEGREES`. 
+   It should _not_ include a direct link to the website.
+
+<!-- TODO: correct this rule.  what about p5.Vector, p5.Graphics, etc.  what about methods of those classes ? p5.Vector/setMag?  static methods? -->
+
+Examples:
+
+From the description of [noLoop()](https://beta.p5js.org/reference/p5/noloop/):
+
+```
+* Runs the code in <a href="#/p5/draw">draw()</a> once.
+```
+
+From the description of [createVector()](https://beta.p5js.org/reference/p5/createvector/):
+
+```
+* Creates a new <a href="#/p5.Vector">p5.Vector</a> object.
+```
+Referring to a variable uses the same syntax.
+
+From the description of [pmouseX](https://beta.p5js.org/reference/p5/pmousex/):
+```
+* ... Its value is <a href="#/p5/mouseX">mouseX</a> from the previous frame.
+```
+
+#### Using images within the description section
+
+In some cases it may be desirable to include, in the description, images or audio or video to help explain or demonstrate a function's working.
+For an example of this see the reference for [`applyMatrix`](https://beta.p5js.org/reference/p5/applymatrix/).
+
+_Hosting_ of these images is discussed later in [this section on assets](#assets-in-examples).
+
+To _link_ to it, you would use an HTML `img` element, with `src` property referring to the image in `assets/`.  Be sure to also include an appropriate `alt` property.
+
+Here's a cut-down example from the source of [`applyMatrix`](https://github.com/processing/p5.js/blob/bf773b74975e58ad0978031338a339e990222202/src/core/transform.js#L31):
+
+```js
+/**
+ * Applies a transformation matrix to the coordinate system.
+ * ...
+ * <img style="max-width: 150px" src="assets/transformation-matrix.png"
+ * alt="The transformation matrix used when applyMatrix is called in 2D mode."/>
+ * ...
+```
+
+### Specifying the function name, parameters and return
+
+Example:
 
 ```
  * @method sin
@@ -93,43 +290,173 @@ At the very top of the comment is the text description of the function. This des
 
 A function will typically have the three sections above, each starting with an `@` symbol followed by one of the following keywords:
 
-- `@method` is used to define the name of the function, in this case `sin` (note that the function name does not include the brackets `()`).
-- `@param` is used to define the parameters or arguments that the function accepts.
-  - Following the keyword `@param`, stored in curly brackets `{}` is the type of the parameter.
-  - After the type, the next word (angle) is the name of the parameter.
-  - After the name, the rest of the line is the description of the parameter.
-- `@return` is used to define the return value of the function.
-  - Following the keyword `@return`, stored in curly brackets `{}` is the type of the return value.
-  - After the type, the rest of the line is the description of the return value.
+#### `@method` - the function name
 
-More generically for parameters, you should follow this format:
+[`@method`](https://jsdoc.app/tags-function) is used to define the name of the function, in this case `sin`.  Note that the function name does not include the brackets `()`.  
+
+You may sometimes see this missing from the reference.  In that case JSDoc will try to infer it by looking at the name of the function from the following source code.  It is recommended to include the function name using the @method tag where possible.
+
+This tag is also useful when detailing multiple signatures for a function (see later).
+
+#### `@param` - details of one parameter
+
+[`@param`](https://jsdoc.app/tags-param) is used to define the parameters or arguments that the function accepts.  It is used once per parameter.
+
+The general format for a parameter is: 
 
 ```
 @param {type} name Description here.
 ```
+
+For example, the `sin()` function has: 
+```
+@param  {Number} angle  the angle.
+```
+
+1. Following the keyword `@param`, the _type_ of the parameter is mentioned in curly brackets `{}`. (in this case, `{Number}`)
+
+2. After the type, the next _word_ (in this case, `angle`) is the name of the parameter.
+  - This must exactly match the name of the relevant parameter in the source code.
+
+3. After the name, the rest of the line is the description of the parameter.
 
 If the parameter is optional, add square brackets around the name:
 
 ```
 @param {type} [name] Description here.
 ```
+<!-- TODO: Give a reference for those wishing to correctly type their work?  Or fully document here. -->
+
+**Examples of parameter types:**
+
+An example from [rect()](https://beta.p5js.org/reference/p5/rect/), where the topleft ("tl") parameter is optional:
+```
+@param  {Number} [tl] optional radius of top-left corner.
+```
+An example from [createCanvas](https://beta.p5js.org/reference/p5/createcanvas/) where a "renderer" parameter can optionally be supplied:
+
+```
+@param  {(P2D|WEBGL)} [renderer] either P2D or WEBGL. Defaults to P2D.
+```
+
+A more advanced example from [hue](https://beta.p5js.org/reference/p5/hue/) where the color parameter can be a p5.Color object, an array of numbers, or a string:
+```
+* @param {p5.Color|Number[]|String} color
+```
+
+**Specifying array types**
+
+When specifying an array type, use `type[]` rather than `Array<type>`.  
+
+For example, use:
+```
+@param {Number[]} colors an array of colors.
+```
+instead of:
+```
+@param {Array<Number>} colors an array of colors.
+```
+
+**"Number" not "number".  "String" not "string".**
+
+If you happen to be familiar with TypeScript, you might be more used to using lowercase `number` or `string` instead of the capitalized versions you see in the examples above.  Throughout the p5.js codebase the primitive types are all capitalized.
+
+<!-- TODO: reason here?  historic with yuidoc?  closure compiler? -->
+
+**Specifying callback functions**
+
+If you need to document a parameter which is expected to be a _function_, you can use the type `Function`.  For example: 
+
+```
+@param {Function} callback
+```
+
+If you can detail the expected function further, use a type of this form: `function(typeOfArgument)`
+
+Example: 
+
+Here's some of the documentation for `loadImage`, which has an optional parameter, `successCallback`.  This received callback function will be passed the loaded `p5.Image` once ready:
+
+```
+* @method loadImage
+* @param {function(p5.Image)} [successCallback] 
+* function called with 
+* <a href="#/p5.Image">p5.Image</a> once loaded
+```
+
+<!-- TODO: where's this specified?  provide link(s) -->
+
+#### `@return` - the return value
+
+[`@return`](https://jsdoc.app/tags-returns) is used to define the return value of the function.
+
+The general format for this line is:
+```
+@return {type} Description here.
+```
+
+Example, from `sin()` function:
+
+```
+@return {Number} sine of the angle.
+```
+
+1. Following the keyword `@return`, the _type_ of the return value is stated in curly brackets `{}`.  (e.g. `{Number}` for the `sin()` function)
+2. After the type, the rest of the line is the description of the return value.
+
+If the function does not return a value, the `@return` tag can be left out.
+
+More examples of @return:
+
+Returning an array. (From [p5.Image#get()](https://beta.p5js.org/reference/p5.image/get/)):
+
+```
+@return {Number[]} color of the pixel at (x, y) in array format `[R, G, B, A]`.
+```
+Returning a Promise.  (From [loadFilterShader](https://beta.p5js.org/reference/p5/loadfiltershader/)):
+```
+@return {Promise<p5.Shader>} a promise that resolves with a shader object
+```
 
 
 ### Additional info: Constants
 
-If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js), then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, e.g.:
+If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js), the valid values should be listed in the parameter type, separated by `|` characters (pipe characters).
 
-```
-@param {Constant} horizAlign horizontal alignment, either LEFT, CENTER, or RIGHT
-```
+Example:
 
-For return types you should follow this format:
-
+```js
+/**
+ * @method rectMode
+ * @param {CENTER|RADIUS|CORNER|CORNERS} mode
+ * ...
+ */
 ```
-@return {type} Description of the data returned.
-```
+Constants: A difference with p5 v1.x
 
-If the function does not return a value, the `@return` tag can be left out.
+Previously for p5 v1.x, such parameter types were specified only as `{Constant}`, and the specific values mentioned only in the free text of the parameter description.
+
+Example difference:
+
+For p5 v1.x: 
+```js
+/**
+ * @method textAlign
+ * @param {Constant} horizAlign horizontal
+ *    alignment, either LEFT, CENTER, or RIGHT.
+ * ...
+ */
+ ```
+ 
+As describe above, this changes for p5 v2.x to the following:
+```js
+/**
+  * @method textAlign
+  * @param {LEFT|CENTER|RIGHT} horizAlign 
+  *    horizontal alignment.
+  * ...
+ */
+ ```
 
 
 ### Additional info: Chaining
@@ -141,43 +468,64 @@ If the method returns the parent object, you can skip the `@return` tag and add 
 ```
 
 
-## Additional signatures
+### Additional info: Multiple function signatures
 
-If a function has multiple possible parameter options, you can specify each individually. For example, the [`background()`](https://p5js.org/reference/p5/background/) function takes a number of different parameter options (see "Syntax" section on the reference page). Choose one version to list as the first signature using the template above. At the end of the first reference comment block, you can add additional signatures, each in its own block, using only the `@method` and `@param` tags following the example below.
+If a function has multiple possible parameter options, you can specify each individually. For example, the [`background()`](https://beta.p5js.org/reference/p5/background/) function takes a number of different parameter options (see "Syntax" section on the reference page). Choose one version to list as the first signature using the template above. After the end of the first reference comment block, you can add additional signatures, each in its own block, using only the `@method` and `@param` tags following the example below.
 
-```
+```js
 /**
  * @method background
- * @param {String} colorstring color string, possible formats include: integer
- *                         rgb() or rgba(), percentage rgb() or rgba(),
- *                         3-digit hex, 6-digit hex
+ * @param {String} colorstring color string, 
+ *   possible formats include: integer rgb()
+ *   or rgba(), percentage rgb() or rgba(),
+ *   3-digit hex, 6-digit hex
  * @param {Number} [a] alpha value
  */
 
 /**
  * @method background
- * @param {Number} gray specifies a value between white and black
+ * @param {Number} gray specifies a value 
+ *                between white and black
  * @param {Number} [a]
  */
 ```
 
 
-### Additional info: Multiple signatures
+#### Additional info: Multiple signatures vs optional parameter
 
 It is not necessary to create a separate signature if the only difference between two signatures is the addition of an optional parameter. Limit the use of this feature if possible because it can create unnecessary noise in the reference.
 
+#### Rare issues with more complex types
 
-## Reference for p5.js variables
+The types specified for function parameters, return values, variables, and object properties are used not only to build the online reference but also to build type-declaration files.
 
-So far, we have looked at how to write references for functions and constants. Variables follow the same structure but use different tags.
+These type-declaration files have multiple uses.  For example:
+* providing autocompletion and intellisense in IDEs, including web editors
+* type-checking JavaScript or TypeScript sketches.
 
-```
+This makes it even more desirable that we correctly specify the exact type of each element of the library.
+However, in a very few specialized cases, the normal way of documenting these types cannot support exactly what you need to say.
+
+In this rare situation, it is possible to use a last-resort mechanism to inject the correct types directly into the type-declaration files.  For details on this see [Patching types](./reference_generation_process#patching-types) in the reference generation process documentation.
+
+Bear in mind this is a last resort.  Try to correctly specify the types in the documentation comments wherever possible.
+
+## Reference comment blocks for p5.js variables
+
+So far, we have looked at how to write references for functions.  Variables follow the same structure but use different tags.
+
+Example: the reference comment block for the built-in variable, `mouseX`:
+
+```js
 /**
- * The system variable mouseX always contains the current horizontal
- * position of the mouse, relative to (0, 0) of the canvas. The value at
- * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
- * If touch is used instead of mouse input, mouseX will hold the x value
- * of the most recent touch point.
+ * The system variable mouseX always contains
+ * the current horizontal position of the
+ * mouse, relative to (0, 0) of the canvas.
+ * The value at the top-left corner is (0, 0)
+ * for 2-D and (-width/2, -height/2) for
+ * WebGL.  If touch is used instead of mouse
+ * input, mouseX will hold the x value of the
+ * most recent touch point.
  *
  * @property {Number} mouseX
  * @readOnly
@@ -189,19 +537,22 @@ So far, we have looked at how to write references for functions and constants. V
  * function draw() {
  *   background(244, 248, 252);
  *   line(mouseX, 0, mouseX, 100);
- *   describe('horizontal black line moves left and right with mouse x-position');
+ *   describe('horizontal black line moves 
+ *   left and right with mouse x-position');
  * }
  * </code>
  * </div>
  */
 ```
 
-The start of the block contains the description of the variable (`mouseX` in this case). To define the name of the variable, we use `@property` instead of `@method`. `@property` follows the same syntax as `@param` for defining the type and its name. The `@readonly` tag is present on most p5.js variables and is used internally to indicate this value should not be overwritten directly by a library user.
+The start of the block contains the description of the variable (`mouseX` in this case). To define the name of the variable, we use [`@property`](https://jsdoc.app/tags-property) instead of `@method`. `@property` follows the same syntax as `@param` for defining the type and its name. 
+
+The `@readonly` tag is present on most p5.js variables and is used internally to indicate this value should not be overwritten directly by a library user.
 
 
 ## Adding examples
 
-One tag that is present in both `sin()` and `mouseX`’s reference comments that we have not talked about yet is the `@example` tag. This tag is where you define the code example(s) that is run when you visit the reference page.
+One tag that is present in both `sin()` and `mouseX`’s reference comments that we have not talked about yet is the [`@example`](https://jsdoc.app/tags-example) tag. This tag is where you define the code examples that are shown and run when you visit the reference page.
 
 ![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](images/reference-screenshot.png)
 
@@ -225,9 +576,28 @@ The relevant `@example` tag to create the above is as follows:
  * </div>
 ```
 
-After the `@example` tag, you should start an HTML `<div>` tag followed by a `<code>` tag. In between the opening and closing `<code>`  tag, you will insert the relevant example code. The basic principle of writing good example code for the reference is to keep things simple and minimal. The example should be meaningful and explain how the feature works without being too complicated. The example’s canvas should be 100x100 pixels and if the `setup()` function is not included, such as in the example above, the code will be automatically wrapped in a `setup()` function with a default 100x100 pixels gray background canvas created. We won’t go through the details about best practices and code style for the example code here; please see the reference style guide instead.
+After the `@example` tag, you should start an HTML `<div>` tag followed by a `<code>` tag. In between the opening and closing `<code>`  tag, you will insert the relevant example code. 
 
-You can have multiple examples for one feature. To do so, add an additional `<div>` and `<code>` HTML block right after the first closed, separated by a blank line.
+Generally, each example should be a self-contained complete sketch that will run on the reference website and which could be run directly if pasted into the web editor (for example).
+
+It should declare `setup()` and `draw()` functions as required.
+
+The example’s canvas should be 100x100 pixels.  If the `setup()` function is not included, such as in the example above, the code will be automatically wrapped in a `setup()` function with a default 100x100 pixels gray background canvas created. 
+
+
+#### About the complexity of examples
+
+The basic principle of writing good example code for the reference is to keep things simple and minimal. The example should be meaningful and explain how the feature works without being too complicated.  
+
+While it may be tempting to make a more interesting, engaging, or "cool" example using other functions (e.g. noise()), or using clever math, that makes it harder for readers to understand.  Try to minimize the pre-requisites necessary for the reader to follow your example.
+
+We won’t go through the details about best practices and code style for the example code here; please see the [reference style guide](https://beta.p5js.org/contribute/documentation_style_guide/), instead.
+
+#### Providing multiple examples
+
+You can have multiple examples for one feature. To do so, after the previous `<div>` and `<code>` block is closed, add a blank line, an an additional `@example` tag and new `<div>` and `<code>` block.  
+
+Example:
 
 ```
 * @example
@@ -238,6 +608,7 @@ You can have multiple examples for one feature. To do so, add an additional `<di
 * </code>
 * </div>
 *
+* @example
 * <div>
 * <code>
 * arc(50, 50, 80, 80, 0, PI, OPEN);
@@ -246,7 +617,9 @@ You can have multiple examples for one feature. To do so, add an additional `<di
 * </div>
 ```
 
-If you do not want the reference page to execute your example code (i.e., you just want the code to show up), include the class “`norender`” in the `<div>`:
+### Preventing execution of example code with @norender
+
+If you do not want the reference page to execute your example code (i.e., you just want the code to show up), include the class "`norender`" in the `<div>`:
 
 ```
 * @example
@@ -257,8 +630,9 @@ If you do not want the reference page to execute your example code (i.e., you ju
 * </code>
 * </div>
 ```
+### Preventing automated-testing of example code with @notest
 
-If you do not want the example to be run as part of the automated tests (for example, if the example requires user interaction), include the class “`notest`” in the `<div>`:
+If you do not want the example to be run as part of the automated tests (for example, if the example requires user interaction), include the class "`notest`" in the `<div>`:
 
 ```
 * @example
@@ -269,15 +643,67 @@ If you do not want the example to be run as part of the automated tests (for exa
 * }
 * </code></div>
 ```
+### Requiring browser features for example code
 
-If your example uses external asset files, put them in the [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) folder (or reuse one already in there) then link to them with "assets/filename.ext" in the code. See the [tint()](https://p5js.org/reference/p5/tint/) reference for example.
+In some cases, the example code may be intended to demonstrate  p5.js functionality that depends on a feature that is not universally available on all browsers or devices (most notably, WebGL).  Rather than having this code run and break on incompatible browsers, use the "modernizr" attribute along with the name of the required feature.  At runtime, if that feature is not detected on the user's browser, the code will not be executed.  ([Features are listed here](https://modernizr.com/docs/#features).)
 
+Example:
+This example code will not try to run if WebGL is not available to the user's browser.
+
+```js
+* @example
+* <div modernizr='webgl'>
+* <code>
+* function setup() {
+*   createCanvas(100, 100, WEBGL);
+* }
+* </code>
+* </div>
+```
+
+## <a id="assets-in-examples"></a>Using assets in examples and descriptions
+
+If your example code (or the description section) uses asset files (e.g. images, fonts, sounds), here's how to work with them.
+1. Add the asset file(s) in the _p5.js-website_ repo's [/public/assets](https://github.com/processing/p5.js-website/tree/2.0/public/assets) folder.
+2. Refer to the asset with the path `assets/filename.ext` in the code example or description.
+
+Examples: 
+
+For a full working example, see the [tint()](https://beta.p5js.org/reference/p5/tint/) reference.
+
+```js
+img = await loadImage('assets/rockies.jpg');
+```
+The above code will load the image file, [/public/assets/rockies.jpg](https://github.com/processing/p5.js-website/blob/2.0/public/assets/rockies.jpg), stored in the p5.js-website repo.
+
+```js
+font = await loadFont('assets/inconsolata.otf');
+```
+The above code will load the font file, [/public/assets/inconsolata.otf](https://github.com/processing/p5.js-website/blob/2.0/public/assets/inconsolata.otf), stored in the p5.js-website repo.
+
+#### Asset hosting differs from p5 v1
+
+Note that this hosting location is a significant change from p5 v1.x where such assets were stored instead in the _p5.js_ repo.
+
+#### Re-using existing assets
+
+You may wish to make use of an asset that's already in that directory, linking to it in the same way.  (Reusing assets also provides familiarity to the reader across the documentation).  You can see all such assets [here](https://github.com/processing/p5.js-website/tree/2.0/public/assets).  (Cloning that repo and using a file explorer to open `public/assets` will make it easier to browse the assets.)
+
+#### Hotlinking asset files in examples
+
+<!-- TODO: check policies here - what follows is just a sketched placeholder. -->
+
+Whilst it is technically possible to hotlink to an asset file hosted elsewhere (such as [wikimedia commons](https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia/technical)) when permitted by the copyright license and hosting provider, anyone could later change, vandalize, rename, or delete that hotlinked asset.
+
+(It also makes offline copies of the reference much harder to produce.)
+
+It is recommended, instead, to use assets hosted by the p5.js-website itself, as described previously here.
 
 ### Add a canvas description using `describe()`
 
 Finally, for every example you add, you are required to use the p5.js function `describe()` in the example to create a screen-reader accessible description for the canvas. Include only one parameter: a string with a brief description of what is happening on the canvas.
 
-```
+```js
 * @example
 * <div>
 * <code>
@@ -308,10 +734,15 @@ Finally, for every example you add, you are required to use the p5.js function `
 * </div>
 ```
 
-For more on `describe()` visit the [web accessibility contributor documentation](./web_accessibility/#describe), and the [Writing Accessible Canvas Descriptions](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
+For more on `describe()` visit the [web accessibility contributor documentation](./web_accessibility/#describe), and the [Writing Accessible Canvas Descriptions](https://beta.p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
 
-With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usage of JSDoc style reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
+## Less common JSDoc tags
 
+With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usages of JSDoc reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
+
+There is also some coverage of these tags in the [JSDoc best practices](./jsdoc/) document.
+
+<!-- TODO: perhaps only link here to [./jsdoc.md](./jsdoc) or bring all of that into this document. -->
 
 ### `@private` tag
 
@@ -319,7 +750,7 @@ You can use the `@private` if a property or variable is a private function or va
 
 
 
-```
+```js
 /**
  * _start calls preload() setup() and draw()
  *
@@ -329,16 +760,42 @@ You can use the `@private` if a property or variable is a private function or va
 p5.prototype._start = function () {
 ```
 
-
 ### `@module` and related tags
 
-At the top of each source code file will be a `@module` tag. Modules correspond to a group of features in p5.js which on the rendered reference page on the website are split into the corresponding sections. Inside each module, there are additional submodules defined with the `@submodule` tag.
+#### `@module` and `@submodule`
+
+At the top of each source code file will be a comment block with a `@module` tag. A module is a top-level grouping of features in the reference pages on the website.  This does _not_ necessarily correspond to any specific software `module` concept in the code itself.
+
+After the `@module` tag, an optional `@submodule` tag can be used to further group features for the website.  This `@submodule` tag can be set differently on any comment block in the file to change the submodule for a specific feature.
+
+The convention p5.js follows is that each subfolder in the `src/` folder will be one `@module` while each file inside the subfolder will be its own `@submodule` under the overall subfolder’s `@module`. Unless you are adding new subfolders/files to the p5.js source code, you shouldn’t need to edit a file's top-level reference comment block.
+
+On the website, the [top-level reference page](https://beta.p5js.org/reference) presents a list functions and variables grouped by their modules and submodules.
+
+Examples:
+
+The ["Image" module](https://beta.p5js.org/reference/#Image) in `src/image` has the following submodules: "Loading & Displaying", "Pixels", and "p5.Image".
+
+The ["Color" module](https://beta.p5js.org/reference/#Color) in `src/color` has the following submodules: 
+ "Creating & Reading", "Setting", and "Color Conversion".
+
+The _conceptual_ ["3D" module](https://beta.p5js.org/reference/#3D) documents code  mostly from `src/webgl` (there is no `src/3D`), and has the following submodules: "Camera", "Interaction", "Lights", "Material", "strands", "p5.Camera", "p5.Shader".
+
+#### The `@for` tag
 
 The `@for` tag defines the relationship between this module and the overall `p5` class, effectively saying this module is a part of the `p5` class.
 
+<!-- TODO: clarify the nature of this relationship documented by the @for tag.  Where might this be used - still only in docs?  also in type-gen? elsewhere? -->
+
+#### The @requires tag
+
 The `@requires` tag defines the required imported modules that the current module depends on.
 
-```
+<!-- TODO: clarify where this @requires info is made use of.  What responsibilities does the author have to state these correctly and comprehensively? -->
+
+Example of `@for` and `@requires`
+
+```js
 /**
  * @module Color
  * @submodule Creating & Reading
@@ -348,69 +805,188 @@ The `@requires` tag defines the required imported modules that the current modul
  */
 ```
 
-The convention p5.js follows is that each subfolder in the `src/` folder will be one `@module` while each file inside the subfolder will be its own `@submodule` under the overall subfolder’s `@module`. Unless you are adding new subfolders/files to the p5.js source code, you shouldn’t need to edit this reference comments block.
-
-
 ### `@class` tag
 
 Class constructors are defined with the `@class` tag and the `@constructor` tag. The format for this block is similar to how a function is defined with the `@method` block, the class’s name will need to be defined with the `@class` tag and the `@constructor` tag will indicate the class has a constructor function. See the example below for the `p5.Color` class:
 
-```
+```js
 /**
- * A class to describe a color. Each `p5.Color` object stores the color mode
- * and level maxes that were active during its construction. These values are
- * used to interpret the arguments passed to the object's constructor. They
- * also determine output formatting such as when
- * <a href="#/p5/saturation">saturation()</a> is called.
+ * A class to describe a color. Each
+ * `p5.Color` object stores the color mode and
+ * level maxes that were active during its
+ * construction. These values are used to
+ * interpret the arguments passed to the
+ * object's constructor. They also determine
+ * output formatting such as when <a
+ * href="#/p5/saturation">saturation()</a> is
+ * called.
  *
- * Color is stored internally as an array of ideal RGBA values in floating
- * point form, normalized from 0 to 1. These values are used to calculate the
- * closest screen colors, which are RGBA levels from 0 to 255. Screen colors
- * are sent to the renderer.
+ * Color is stored internally as an array of
+ * ideal RGBA values in floating point form,
+ * normalized from 0 to 1. These values are
+ * used to calculate the closest screen
+ * colors, which are RGBA levels from 0 to
+ * 255. Screen colors are sent to the
+ * renderer.
  *
- * When different color representations are calculated, the results are cached
- * for performance. These values are normalized, floating-point numbers.
+ * When different color representations are
+ * calculated, the results are cached for
+ * performance. These values are normalized,
+ * floating-point numbers.
  *
- * <a href="#/p5/color">color()</a> is the recommended way to create an instance
- * of this class.
+ * <a href="#/p5/color">color()</a> is the
+ * recommended way to create an instance of
+ * this class.
  *
  * @class p5.Color
  * @constructor
- * @param {p5} [pInst]                  pointer to p5 instance.
+ * @param {p5} [pInst] pointer to p5 instance.
  *
- * @param {Number[]|String} vals        an array containing the color values
- *                                      for red, green, blue and alpha channel
- *                                      or CSS color.
+ * @param {Number[]|String} vals an array 
+ * containing the color values for red, 
+ * green, blue and alpha channel or CSS color.
  */
 ```
 
-
 ## Generating and previewing the reference
 
-The p5.js repository is set up so that you can generate and preview the reference without needing to build and run the p5.js website as well.
+### A quick first in-editor preview for vs code users
 
-- The main command to generate the reference from the reference comments in the source code is to run the following command.
+In some editors, such as vs code, you can hover over a function or variable to see immediately - in a pop-up - a rendering of the information from the documentation above it.  This can be a useful first quick preview, though it won't show everything - it won't run your code examples, or show linked images, for example.
+
+### Previewing your work on the website, locally
+
+At some point you will want to preview how your changes will look on the website.  This involves run the website locally and having it import your p5.js code from a branch of your repo.
+
+Note: the following instructions currently co-exist here and in the website repo file: [/docs/scripts.md in the section "testing the docs of your fork"](https://github.com/processing/p5.js-website/blob/2.0/docs/scripts.md#testing-the-docs-of-your-fork)).
+
+Steps: 
+
+1. Commit your changes to a local branch of your fork of the p5.js repo.  The changes don't need to be pushed to github for this purpose, but they do need to be committed on a branch.
+1. Clone [the p5.js-website repo](https://github.com/processing/p5.js-website/tree/2.0) locally.
+1. In your new p5.js-website repo, check out the branch "2.0".
+1. In your new p5.js-website repo, run `npm install`
+1. In your new p5.js-website repo, run the following command, using the path to your local p5.js repo before the `#`, and the name of your branch after the `#`:
+
+```sh
+npm run custom:dev path/to/local/repo#yourBranch
+```
+
+For example, if your work is in a branch called `my-amazing-branch` on a local p5.js repo called `p5.js` as a sibling directory next to the current p5.js-website directory, you could run the following:
+
+```sh
+npm run custom:dev ../p5.js#my-amazing-branch
+```
+
+This will build the local website reference pages from the data in your branch and start a development preview of the website.  
+
+6. Find the URL that is logged in the console and visit it in your browser in order to test out your changes.
+
+If you prefer to preview work that's already on github, you can do so.  Use the repo url instead of its local path, as follows:
+
+```sh
+npm run custom:dev https://github.com/yourUsername/p5.js.git#yourBranch
+```
+
+#### Limitations
+
+The website won't be _fully_ functional when partially prepared in this way.  Notably:
+
+* links between pages may be broken
+  * You'll need to manually add a trailing slash '/'
+* The search facility will not work
+  * Look into `npm run build:search` to build the necessary index files
+  * ...or just find your function/variable in the [top-level listing](https://beta.p5js.org/reference/).
+
+#### Resetting your changes
+
+When you're done with this preview, you can run this command to reset your changes:
+```sh
+npm run custom:cleanup
+```
+
+## Linting the comments to find errors
+
+The documentation.js tool can also be used for "linting".  This is a process which will look for content in the comment blocks that the tool doesn't understand, or thinks might be incorrect.
+
+If something from your documentation comments is not showing up correctly on the reference site, running the linting tool may yield some clues.
+Alternatively, you might just want to run it to try to find any potential problems _before_ you commit.
+
+We can run it from the command line, in the p5.js repo:
+
+```bash
+npx documentation lint "src/**/*.js"
+```
+
+This will produce _lots_ of warnings, across many files!  These do not necessarily mean there is a problem: for various reasons, the codebase uses some documentation tags that documentation.js doesn't understand (but tolerates) in order to organize the reference.
+
+However, you can look through for any warnings relating to the file _you_ are working on, to see if anything stands out.  (e.g. a misspelled tag, mismatching parameter name, or "Unknown content")
+
+**Example of a minor issue found by the linter:**
 
 ```
-npm run docs
+/path/to/p5.js/src/io/p5.TableRow.js
+153:1  warning  An explicit parameter named rowID was specified but didn't match inferred information r
 ```
 
-This will generate the necessary preview files and the main `docs/reference/data.json` file, which is the same file (after minification) that will be used to render the reference page on the website.
+**Explanation: **
 
-- For continuous work on the reference, you can run the following command.
+The above warning says that there's a problem:
 
+* in the file `p5.TableRow.js`
+* on line 153, anywhere from character 1
+* where @param "rowID" was documented...
+* ...but there's no parameter of that name in the function that follows.  
+  * (It has inferred we must be talking about "r" - the only parameter the function has.)
+
+Here's a minimal example of hypothetical code in `p5.TableRow.js` that would have caused this warning.  (Content unrelated to the warning is not shown here).
+
+```js
+/**
+ * Returns a ref to the specified p5.TableRow.
+ *
+ * @param {Number} rowID  ID of the row to get.
+ */
+getRow (r) {
+  return this.rows[r];
+}
 ```
-npm run docs:dev
-```
-
-This will launch a live preview of the rendered reference that will update each time you make changes (you will need to refresh the page after making changes to see them appear). This is useful, especially for previewing example code running in the browser.
-
-- The main template files are stored in the `docs/` folder and, in most cases, you should not make changes directly to files in this folder, except to add new asset files in the `docs/yuidoc-p5-theme/assets` folder.
-
 
 ## Next steps
 
-For additional details about the reference system, you can checkout the documentation for [JSDoc](https://jsdoc.app/) and [YUIDoc](https://yui.github.io/yuidoc/).
+* We also have a [JSDoc best practices](https://beta.p5js.org/contribute/jsdoc/) document.
+* For additional details about the reference system, you can checkout the documentation for [JSDoc](https://jsdoc.app/)
+* For in-depth detail on how the reference generation process works, see [reference generation process](./reference_generation_process/).
+* For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). 
+* The [contributor guidelines](./contributor_guidelines/) document is also a good place to start.
 
-For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). The [contributor guidelines](./contributor_guidelines.md) document is also a good place to start.
+## <a id="doc-differences-v1-to-v2"></a>Appendix: Summary of documentation differences between p5.js v1 and v2
 
+**Overview: Syntax and tooling per p5.js version**
+
+* in p5 v2, documentation comments are:
+  * written in JSDoc syntax
+  * processed with a [tool called documentation.js](https://documentation.js.org/).
+  * (Some non-JSDoc tags remain in use as the p5 documentation build system is quite customized.)
+
+* in p5 v1, documentation comments are:
+  * written in YUIDoc syntax
+  * processed with a [tool called YUIDoc](https://yui.github.io/yuidoc/).
+
+### Syntax differences between YUIDoc and JSDoc
+
+* YUIDoc requires function names be provided with the `@method` tag, whereas JSDoc can generally extract that information from the implementation source code.
+
+* JSDoc does not have either `@submodule` or `@for` tags (YUIDoc does) but we continue to use them throughout the v2.x codebase as a mechanism by which we group functions, variables, and classes on the website. If you run `documentation lint` you'll see complaints about these tags but Documentation.js collects the tagged information into its output without problem for the subsequent build-processes to use.
+
+* YUIDoc code examples (tagged with @example) are automatically wrapped with `<span>` and other markup.  For documentation.js, we write the wrapping `<div>` and `<code>` elements around the example code ourselves.
+
+### Other documentation differences between versions
+
+* Hosting assets: For v2, code example assets (images, fonts, etc) go in the website repo's `public/assets` folder.  In v1 these went in the `docs/yuidoc-p5-theme/assets` folder of the p5.js repo.
+
+* Previewing the reference: In v2, previewing the reference site locally can no longer be done with the p5.js repo alone, but requires running build:reference on the website repo.  In v1 this was possible without requiring the website repo.
+
+* Constants: In v2, constants accepted in a function parameter are shown in that parameter's type, whereas in v1 they were listed in the parameter's description.  See [Additional info: Constants](#additional-info-constants)
+
+* The documentation is generated with the tool documentation.js, not the YUIDoc tool.  See [Reference generation process](./reference_generation_process/).
