@@ -28,7 +28,8 @@ graph TD
   
   contentReference["/src/content<br>/reference/**/*.mdx"]@{shape: docs}
   
-  websiteNpmBuildReference --> contentReference
+  websiteNpmBuildReference --> convertDocsToMDX
+  convertDocsToMDX --> contentReference
 
 ```
 
@@ -36,11 +37,20 @@ graph TD
 
 <!-- TODO: When does this command get run? -->
 
-The process is started with the execution of the following command from the p5.js repo:
+The process is started with the execution of the following command from the p5.js-website repo:
+
+```bash
+npm build:reference
+```
+
+This clones the p5.js repo into a working directory on the website and there runs:
 
 ```bash
 npm run docs
 ```
+
+### p5.js: npm run docs
+
 You can run it locally and observe the outputs.
 
 It is currently run by [a release process workflow](../.github/workflows/release-workflow-v2.yml) on Github Actions CI.
@@ -56,7 +66,7 @@ In turn this command runs the following single-line command:
 
 This is actually _two_ commands in sequence: First, `documentation build ...`, and then - if the first command was successful `node ./utils/convert.mjs`.  We'll look at these in turn.
 
-### Step 1: `documentation build...` command
+#### Step 1: `documentation build...` command
 
 This command turns JSDoc comment blocks across all the javascript files into a single structured json file ready for further processing.
 
@@ -92,7 +102,7 @@ You can run this command yourself locally and inspect the output file to see the
 
 You can also run `npx documentation build --help` to read the manual page for documentation.js.
 
-### Step 2: `node ./utils/convert.mjs` command
+#### Step 2: `node ./utils/convert.mjs` command
 
 The second command is
 ```bash
@@ -113,7 +123,7 @@ This file will be used by the p5.js-website to generate the final pages.
 
 \* The convert script has _also_ generated `/docs/parameterData.json` which is used by the friendly error system (FES) at runtime to validate function parameters.  We won't discuss that further here.
 
-### Excerpt of /docs/reference.data.json
+#### Excerpt of /docs/reference.data.json
 
 Here's an excerpt from `/docs/reference/data.json`, showing how our `sin` function documentation is now represented at the end of both steps taken by `npm run docs`:
 
@@ -152,6 +162,95 @@ Here's an excerpt from `/docs/reference/data.json`, showing how our `sin` functi
   "submodule": "Trigonometry"
 },
 ```
+
+### after p5.js npm run docs - p5.js-website continues
+
+Once the p5.js `npm run docs` script has finished, the p5.js-website's `npm run build:reference` command continues, as follows:
+
+#### Summary: 
+Loads the generated `./docs/reference/data.json`
+Generates an MDX file for each entry in the data.
+
+That's it!  (The Astro web app will read these MDX files at runtime.)
+
+#### More detail:
+
+
+For each module:
+  * generates the file path to which generated pages will be stored
+For each feature: 
+  * generates the MDX content for the relevant page
+
+
+
+e.g. here's one item loaded from the reference file: 
+```json
+{
+  itemtype: "property",
+  name: "RGB",
+  file: "src/scripts/parsers/in/p5.js/src/color/creating_reading.js",
+  line: 16,
+  type: "RGB",
+  description: "",
+  module: "Color",
+  submodule: "Creating & Reading",
+  class: "p5",
+}
+```
+Here's the path decided for it: 
+`'src/content/reference/en/p5/constants'`
+
+(TODO: why?)
+### convertDocsToMDX
+
+This builds an array of objects:
+```js
+{ mdx, savePath, name: doc.name }
+```
+and fills in a modulePath tree as it goes, with discovered module, submodule hierarchy.
+
+```js
+addDocToModulePathTree():
+  itemPath = 'p5/constants/RGB'
+  modulePath = "Color"
+  subPath= "Creating & Reading",
+  merges the following into modulePathTree: {
+    Color: {
+      "Creating & Reading": {
+        RGB: "p5/constants/RGB",
+      },
+    },
+  }
+//fix doc description
+correctRelativeLinksInDescription(doc.description)
+correctRelativeLinksToExampleAssets(doc.description)
+
+//fix doc.example (a string[])
+doc.example = correctRelativeLinksToExampleAssets(doc.example) 
+
+//generate MDX from the doc object
+mdx = convertToMDX(doc);
+#### convertToMDX(doc)
+   let frontMatterArgs = {
+      title: sanitizeName(doc.name),
+      module: doc.module,
+      submodule: doc.submodule ?? "",
+      file: doc.file.replace(/.*p5\.js\/(.*)/, "$1"),
+      description: doc.description ?? "",
+      line: doc.line,
+      deprecated: doc.deprecated,
+  }
+  //generate front matter as a string
+  //e.g. "---title: RGBmodule: Constantssubmodule: Creating & Readingfile: src/color/creating_reading.jsdescription: ''line: 16isConstructor: falseitemtype: propertyclass: p5type: RGB---"
+
+  // Convert the markdown content to MDX
+  const mdxContent = remark().use(remarkMDX).processSync(markdownContent);
+  //returns this text: 
+  example="---title: RGBmodule: Constantssubmodule: Creating & Readingfile: src/color/creating_reading.jsdescription: ''line: 16isConstructor: falseitemtype: propertyclass: p5type: RGB---\n# RGB\n"
+
+  //remove the old .mdx files from the repo
+  //save the new MDX content objects to their appropriate paths
+
 
 ## Bonus: Flow diagram for search index generation
 
