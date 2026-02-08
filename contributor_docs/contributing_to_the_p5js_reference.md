@@ -219,34 +219,66 @@ Multiplies a vector by a scalar and returns a new vector.
 
 ```
 
-#### <a id="linking"></a>Linking to another function or variable
+#### <a id="linking"></a>Linking to another p5.js feature
 
-A hyperlink HTML element - with the `a` tag) can be used within a function description to link to the documentation of a relevant function or variable.
+A hyperlink HTML element (with the `a` tag) can be used within a description to link to the documentation of another relevant feature of the p5.js library.
 
-The url should be of this "fragment" or "hash" form: `#/p5/ + function_or_variable_name`, e.g. `#/p5/circle`, `#/p5/DEGREES`. 
-   It should _not_ include a direct link to the website.
-
-<!-- TODO: correct this rule.  what about p5.Vector, p5.Graphics, etc.  what about methods of those classes ? p5.Vector/setMag?  static methods? -->
-
-Examples:
-
-From the description of [noLoop()](https://beta.p5js.org/reference/p5/noloop/):
+Example: 
 
 ```
-* Runs the code in <a href="#/p5/draw">draw()</a> once.
+<a href="#/p5/circle">circle()</a>
 ```
 
-From the description of [createVector()](https://beta.p5js.org/reference/p5/createvector/):
+Note that the URL should _not_ include a direct link to the website.
 
+With the [exception of constants](#linking-to-constants), the URL should be of the following "fragment" or "hash" form: 
+
+`#/class/property`
+
+Example URLs linking to functions and variables:
+
+* `#/p5/circle`
+* `#/p5/createCanvas`
+* `#/p5/fill`
+* `#/p5/mouseX`
+* `#/p5.Vector/lerp`
+* `#/p5.Vector/dist`
+* `#/p5.Image/width`
+
+Examples URLS linking to classes:
+
+* `#/p5.Color`
+* `#/p5.Image`
+* `#/p5.Vector`
+
+As seen above, when there's no property involved, just a class itself, the second slash is generally omitted.
+
+Full examples:
+
+From the description of [dist](https://beta.p5js.org/reference/p5/dist/) in [calculation.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/calculation.js)
 ```
-* Creates a new <a href="#/p5.Vector">p5.Vector</a> object.
+* Use <a href="#/p5.Vector/dist">p5.Vector.dist()</a> 
+* to calculate the distance between two 
+* <a href="#/p5.Vector">p5.Vector</a> objects.
 ```
-Referring to a variable uses the same syntax.
 
 From the description of [pmouseX](https://beta.p5js.org/reference/p5/pmousex/):
 ```
-* ... Its value is <a href="#/p5/mouseX">mouseX</a> from the previous frame.
+* Its value is <a href="#/p5/mouseX">mouseX</a>
+* from the previous frame.
 ```
+
+<a id=linking-to-constants></a>**Exception: Linking to constants**
+
+Links to constants should instead follow this form:
+
+`#/p5/constants/name-of-constant`
+
+Example URLS:
+
+* `#/p5/constants/DEGREES`
+* `#/p5/constants/CENTER`
+* `#/p5/constants/LEFT`
 
 #### Using images within the description section
 
@@ -304,6 +336,7 @@ For example, the `sin()` function has:
 ```
 
 1. Following the keyword `@param`, the _type_ of the parameter is mentioned in curly brackets `{}`. (in this case, `{Number}`)
+  - This is strongly recommended but can be omitted in certain cases (notably in p5.strands).
 
 2. After the type, the next _word_ (in this case, `angle`) is the name of the parameter.
   - This must exactly match the name of the relevant parameter in the source code.
@@ -334,6 +367,17 @@ A more advanced example from [hue](https://beta.p5js.org/reference/p5/hue/) wher
 * @param {p5.Color|Number[]|String} color
 ```
 
+**Links in param descriptions**
+
+You can include links in the description of a parameter.  See [linking](#linking).
+
+Example:
+```
+* @method rotate
+* @param {Number} angle angle of rotation in 
+* the current <a href="#/p5/angleMode">angleMode()</a>.
+```
+
 **Specifying array types**
 
 When specifying an array type, use `type[]` rather than `Array<type>`.  
@@ -349,9 +393,7 @@ instead of:
 
 **"Number" not "number".  "String" not "string".**
 
-If you happen to be familiar with TypeScript, you might be more used to using lowercase `number` or `string` instead of the capitalized versions you see in the examples above.  Throughout the p5.js codebase the primitive types are all capitalized.
-
-<!-- TODO: reason here?  historic with yuidoc?  closure compiler? -->
+Throughout the p5.js documentation, primitive types are all capitalized: String, Number, Boolean, etc.  (This is an example where our convention differs from JSDoc.)
 
 **Specifying callback functions**
 
@@ -396,18 +438,29 @@ Example, from `sin()` function:
 
 If the function does not return a value, the `@return` tag can be left out.
 
-More examples of @return:
+If the function returns a value but you want it to be type `any`, use `{*}`, e.g. `@return {*} description here...`
+
+You can include links in the description of a return.  See [linking](#linking).
+
+More examples of `@return`:
+
+Linking to the documentation of the returned object.  (From: [createVector()](https://beta.p5js.org/reference/p5/createVector/)):
+```
+@return {p5.Vector} new 
+<a href="#/p5.Vector">p5.Vector</a> object.
+```
 
 Returning an array. (From [p5.Image#get()](https://beta.p5js.org/reference/p5.image/get/)):
-
 ```
-@return {Number[]} color of the pixel at (x, y) in array format `[R, G, B, A]`.
-```
-Returning a Promise.  (From [loadFilterShader](https://beta.p5js.org/reference/p5/loadfiltershader/)):
-```
-@return {Promise<p5.Shader>} a promise that resolves with a shader object
+@return {Number[]} color of the pixel at (x, y)
+in array format `[R, G, B, A]`.
 ```
 
+Returning a Promise.  (From [loadFilterShader()](https://beta.p5js.org/reference/p5/loadFilterShader/)):
+```
+@return {Promise<p5.Shader>} a promise that 
+resolves with a shader object.
+```
 
 ### Additional info: Constants
 
@@ -538,7 +591,7 @@ The `@readonly` tag is present on most p5.js variables and is used internally to
 
 ## Adding examples
 
-One tag that is present in both `sin()` and `mouseX`’s reference comments that we have not talked about yet is the [`@example`](https://jsdoc.app/tags-example) tag. This tag is how you define each code example to be shown and run when you visit the reference page.
+One tag that is present in both `sin()` and `mouseX`’s reference comments that we have not talked about yet is the [`@example`](https://jsdoc.app/tags-example) tag. This tag is the main way to define each code example to be shown and run when you visit the reference page.
 
 ![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](images/reference-screenshot.png)
 
@@ -558,14 +611,13 @@ The relevant `@example` tag to create the above is as follows:
  * );
 ```
 
-Generally, each example should be a self-contained complete sketch that will run on the reference website and which could be run directly if pasted into the web editor (for example).
+Generally, each example should be a self-contained complete sketch that will run on the reference website and which could be run directly if pasted into (for example) the web editor.
 
 It should declare `setup()` and `draw()` functions as required.
 
-The example’s canvas should be 100x100 pixels.  If the `setup()` function is not included, such as in the example above, the code will be automatically wrapped in a `setup()` function with a default 100x100 pixels gray background canvas created. 
+The example’s canvas should be 100x100 pixels.
 
-
-#### About the complexity of examples
+### About the complexity of examples
 
 The basic principle of writing good example code for the reference is to keep things simple and minimal. The example should be meaningful and explain how the feature works without being too complicated.  
 
@@ -573,9 +625,9 @@ While it may be tempting to make a more interesting, engaging, or "cool" example
 
 We won’t go through the details about best practices and code style for the example code here; please see the [reference style guide](https://beta.p5js.org/contribute/documentation_style_guide/), instead.
 
-#### Providing multiple examples
+### Providing multiple examples
 
-You can have multiple examples for one feature. These should be separated by a blank line and a new @example tag.
+You can have multiple examples for one feature. These should be separated by a blank line and a new @example tag for each.
 
 Example:
 
@@ -588,6 +640,33 @@ Example:
 * arc(50, 50, 80, 80, 0, PI, OPEN);
 * describe('The bottom half of an ellipse created using arc.');
 ```
+### Inserting examples _within_ the description
+
+It is possible, and often desirable, to include one or two early runnable examples _within_ the description section, before the main "Examples" section of the page.  (This is particularly useful when a function or class has a lengthy description section.)
+
+The <a href="https://beta.p5js.org/reference/p5/image/">p5.Image reference</a> has a good example of this. ([Source here](https://github.com/processing/p5.js/blob/6a61f7fb3055969fe53d9f82027f891d245b3e9f/src/webgl/material.js#L597)).
+
+To add such an example, instead of using an `@example` tag, surround the example code in a "fenced" markdown code-block with the annotation `js example`.  Here's an example of how it should look:
+
+````
+* ```js example
+* function setup(){
+*   fill('orange');
+*   circle(0, 30, 10);
+* }
+* ```
+````
+
+To make the code-block, surround your example code before and after by three backticks on a newline.
+The opening backticks should be immediately followed by the annotation `js example`.  Remember, you should not use an `@example` tag in this case.
+
+**Why is this important?**
+
+Early examples like this allow the reader to quickly play with, and get an early understanding of, a p5.js feature _without_ having to read or scroll through possibly overwhelming amounts of documentation discussing in-depth details of the feature.
+
+### When examples omit setup()
+
+If the `setup()` function is not included, such as in the example above, the code will be automatically wrapped in a `setup()` function with a default 100x100 pixels gray background canvas created.  While you will see such examples included in this guide for brevity, it is generally preferred that your example be a complete sketch.
 
 ### Preventing execution of example code with `norender`
 
@@ -620,15 +699,15 @@ font = await loadFont('assets/inconsolata.otf');
 ```
 The above code will load the font file, [/public/assets/inconsolata.otf](https://github.com/processing/p5.js-website/blob/2.0/public/assets/inconsolata.otf), stored in the p5.js-website repo.
 
-#### Asset hosting differs from p5 v1
+### Asset hosting differs from p5 v1
 
 Note that this hosting location is a significant change from p5 v1.x where such assets were stored instead in the _p5.js_ repo.
 
-#### Re-using existing assets
+### Re-using existing assets
 
 You may wish to make use of an asset that's already in that directory, linking to it in the same way.  (Reusing assets also provides familiarity to the reader across the documentation).  You can see all such assets [here](https://github.com/processing/p5.js-website/tree/2.0/public/assets).  (Cloning that repo and using a file explorer to open `public/assets` will make it easier to browse the assets.)
 
-#### Hotlinking asset files in examples
+### Hotlinking asset files in examples
 
 <!-- TODO: check policies here - what follows is just a sketched placeholder. -->
 
@@ -717,7 +796,18 @@ The _conceptual_ ["3D" module](https://beta.p5js.org/reference/#3D) documents co
 
 The `@for` tag defines the relationship between this module and the overall `p5` class, effectively saying this module is a part of the `p5` class.
 
-<!-- TODO: clarify the nature of this relationship documented by the @for tag.  Where might this be used - still only in docs?  also in type-gen? elsewhere? -->
+It is also used when documenting class properties, to ensure the documentation attaches to the correct class. (Currently class properties are documented _outside_ their class.)
+
+Example:
+```
+  /**
+   * The x component of the vector
+   * @type {Number}
+   * @for p5.Vector
+   * @property x
+   * @name x
+   */
+```
 
 #### The @requires tag
 
@@ -814,7 +904,7 @@ This will build the local website reference pages from the data in your branch a
 
 6. Find the URL that is logged in the console and visit it in your browser in order to test out your changes.
 
-If you prefer to preview work that's already on github, you can do so.  Use the repo url instead of its local path, as follows:
+If you prefer to preview work that's already on github, you can do so.  Use the repo URL instead of its local path, as follows:
 
 ```sh
 npm run custom:dev https://github.com/yourUsername/p5.js.git#yourBranch
