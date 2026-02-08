@@ -268,7 +268,7 @@ From the description of [pmouseX](https://beta.p5js.org/reference/p5/pmousex/):
 * from the previous frame.
 ```
 
-<a id=linking-to-constants></a>**Exception: Linking to constants**
+<a id="linking-to-constants"></a>**Exception: Linking to constants**
 
 Links to constants should instead follow this form:
 
@@ -293,26 +293,16 @@ Here's a cut-down example from the source of [`applyMatrix`](https://github.com/
 
 ```js
 /**
- * Applies a transformation matrix to the coordinate system.
+ * Applies a transformation matrix to the 
+ * coordinate system.
  * ...
- * <img style="max-width: 150px" src="assets/transformation-matrix.png"
+ * <img style="max-width: 150px" 
+ * src="assets/transformation-matrix.png"
  * alt="The transformation matrix used when applyMatrix is called in 2D mode."/>
  * ...
 ```
 
-### Specifying the function name, parameters and return
-
-Example:
-
-```
- * @method sin
- * @param  {Number} angle  the angle.
- * @return {Number} sine of the angle.
-```
-
-A function will typically have the three sections above, each starting with an `@` symbol followed by one of the following keywords:
-
-#### `@method` - the function name
+### `@method` - specifying the function name
 
 [`@method`](https://jsdoc.app/tags-function) is used to define the name of the function, in this case `sin`.  Note that the function name does not include the brackets `()`.  
 
@@ -320,7 +310,7 @@ You may sometimes see this missing from the reference.  In that case JSDoc will 
 
 This tag is also useful when detailing multiple signatures for a function (see later).
 
-#### `@param` - details of one parameter
+### `@param` - specifying details of each parameter
 
 [`@param`](https://jsdoc.app/tags-param) is used to define the parameters or arguments that the function accepts.  It is used once per parameter.
 
@@ -348,9 +338,8 @@ If the parameter is optional, add square brackets around the name:
 ```
 @param {type} [name] Description here.
 ```
-<!-- TODO: Give a reference for those wishing to correctly type their work?  Or fully document here. -->
 
-**Examples of parameter types:**
+#### Examples of parameter types
 
 An example from [rect()](https://beta.p5js.org/reference/p5/rect/), where the topleft ("tl") parameter is optional:
 ```
@@ -367,18 +356,12 @@ A more advanced example from [hue](https://beta.p5js.org/reference/p5/hue/) wher
 * @param {p5.Color|Number[]|String} color
 ```
 
-**Links in param descriptions**
+**"Number" not "number".  "String" not "string"**
 
-You can include links in the description of a parameter.  See [linking](#linking).
+Throughout the p5.js documentation, primitive types are all capitalized: String, Number, Boolean, etc.  (This is an example where our convention differs from JSDoc.)
 
-Example:
-```
-* @method rotate
-* @param {Number} angle angle of rotation in 
-* the current <a href="#/p5/angleMode">angleMode()</a>.
-```
 
-**Specifying array types**
+#### Parameters that expect arrays
 
 When specifying an array type, use `type[]` rather than `Array<type>`.  
 
@@ -391,11 +374,27 @@ instead of:
 @param {Array<Number>} colors an array of colors.
 ```
 
-**"Number" not "number".  "String" not "string".**
+#### Parameters that expect constants
 
-Throughout the p5.js documentation, primitive types are all capitalized: String, Number, Boolean, etc.  (This is an example where our convention differs from JSDoc.)
+If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js), the valid constants should be listed in the parameter type, separated by `|` characters (pipe characters).
 
-**Specifying callback functions**
+Examples:
+
+```js
+/**
+ * @method rectMode
+ * @param {CENTER|RADIUS|CORNER|CORNERS} mode
+ */
+```
+
+```js
+/**
+  * @method textAlign
+  * @param {LEFT|CENTER|RIGHT} horizAlign 
+  *    horizontal alignment.
+ */
+ ```
+#### Parameters that expect callback functions
 
 If you need to document a parameter which is expected to be a _function_, you can use the type `Function`.  For example: 
 
@@ -416,9 +415,18 @@ Here's some of the documentation for `loadImage`, which has an optional paramete
 * <a href="#/p5.Image">p5.Image</a> once loaded
 ```
 
-<!-- TODO: where's this specified?  provide link(s) -->
+#### Links in param descriptions
 
-#### `@return` - the return value
+You can include links in the description of a parameter.  See [linking](#linking).
+
+Example:
+```
+* @method rotate
+* @param {Number} angle angle of rotation in 
+* the current <a href="#/p5/angleMode">angleMode()</a>.
+```
+
+### `@return` - specifying the return value
 
 [`@return`](https://jsdoc.app/tags-returns) is used to define the return value of the function.
 
@@ -461,46 +469,6 @@ Returning a Promise.  (From [loadFilterShader()](https://beta.p5js.org/reference
 @return {Promise<p5.Shader>} a promise that 
 resolves with a shader object.
 ```
-
-### Additional info: Constants
-
-If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js), the valid values should be listed in the parameter type, separated by `|` characters (pipe characters).
-
-Example:
-
-```js
-/**
- * @method rectMode
- * @param {CENTER|RADIUS|CORNER|CORNERS} mode
- * ...
- */
-```
-Constants: A difference with p5 v1.x
-
-Previously for p5 v1.x, such parameter types were specified only as `{Constant}`, and the specific values mentioned only in the free text of the parameter description.
-
-Example difference:
-
-For p5 v1.x: 
-```js
-/**
- * @method textAlign
- * @param {Constant} horizAlign horizontal
- *    alignment, either LEFT, CENTER, or RIGHT.
- * ...
- */
- ```
- 
-As describe above, this changes for p5 v2.x to the following:
-```js
-/**
-  * @method textAlign
-  * @param {LEFT|CENTER|RIGHT} horizAlign 
-  *    horizontal alignment.
-  * ...
- */
- ```
-
 
 ### Additional info: Chaining
 
@@ -753,7 +721,6 @@ With all the above you should have most of the tools needed to write and edit p5
 
 There is also some coverage of these tags in the [JSDoc best practices](./jsdoc/) document.
 
-<!-- TODO: perhaps only link here to [./jsdoc.md](./jsdoc) or bring all of that into this document. -->
 
 ### `@private` tag
 
@@ -1007,6 +974,28 @@ getRow (r) {
 
 * Previewing the reference: In v2, previewing the reference site locally can no longer be done with the p5.js repo alone, but requires running build:reference on the website repo.  In v1 this was possible without requiring the website repo.
 
-* Constants: In v2, constants accepted in a function parameter are shown in that parameter's type, whereas in v1 they were listed in the parameter's description.  See [Additional info: Constants](#additional-info-constants)
+* Constants: In v2, constants accepted in a function parameter are shown as options in that parameter's type, whereas in v1 they are listed only in the parameter's free-text description and the type is set as (literally) `{Constant}`.
+
+Example:
+
+For p5 v1.x: 
+```js
+/**
+ * @method textAlign
+ * @param {Constant} horizAlign horizontal
+ *    alignment, either LEFT, CENTER, or RIGHT.
+ * ...
+ */
+ ```
+ 
+For p5 v2.x:
+```js
+/**
+  * @method textAlign
+  * @param {LEFT|CENTER|RIGHT} horizAlign 
+  *    horizontal alignment.
+  * ...
+ */
+ ```
 
 * The documentation is generated with the tool documentation.js, not the YUIDoc tool.  See [Reference generation process](./reference_generation_process/).
