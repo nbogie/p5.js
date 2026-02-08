@@ -52,8 +52,6 @@ When you look at the source code of p5.js, you will see many lines in the librar
  * @return {Number} sine of the angle.
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -71,11 +69,8 @@ When you look at the source code of p5.js, you will see many lines in the librar
  *   line(50, y, x, y);
  *   circle(x, y, 20);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -92,11 +87,8 @@ When you look at the source code of p5.js, you will see many lines in the librar
  *   // Draw the point.
  *   point(x, y);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -113,8 +105,6 @@ When you look at the source code of p5.js, you will see many lines in the librar
  *   // Draw the point.
  *   point(x, y);
  * }
- * </code>
- * </div>
  */
 ```
 
@@ -531,8 +521,6 @@ Example: the reference comment block for the built-in variable, `mouseX`:
  * @readOnly
  *
  * @example
- * <div>
- * <code>
  * // Move the mouse across the canvas
  * function draw() {
  *   background(244, 248, 252);
@@ -540,8 +528,6 @@ Example: the reference comment block for the built-in variable, `mouseX`:
  *   describe('horizontal black line moves 
  *   left and right with mouse x-position');
  * }
- * </code>
- * </div>
  */
 ```
 
@@ -552,7 +538,7 @@ The `@readonly` tag is present on most p5.js variables and is used internally to
 
 ## Adding examples
 
-One tag that is present in both `sin()` and `mouseX`’s reference comments that we have not talked about yet is the [`@example`](https://jsdoc.app/tags-example) tag. This tag is where you define the code examples that are shown and run when you visit the reference page.
+One tag that is present in both `sin()` and `mouseX`’s reference comments that we have not talked about yet is the [`@example`](https://jsdoc.app/tags-example) tag. This tag is how you define each code example to be shown and run when you visit the reference page.
 
 ![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](images/reference-screenshot.png)
 
@@ -560,8 +546,6 @@ The relevant `@example` tag to create the above is as follows:
 
 ```
  * @example
- * <div>
- * <code>
  * const c = color(255, 204, 0);
  * fill(c);
  * rect(15, 20, 35, 60);
@@ -572,11 +556,7 @@ The relevant `@example` tag to create the above is as follows:
  * describe(
  *   'Two rectangles with black edges. The rectangle on the left is yellow and the one on the right is red.'
  * );
- * </code>
- * </div>
 ```
-
-After the `@example` tag, you should start an HTML `<div>` tag followed by a `<code>` tag. In between the opening and closing `<code>`  tag, you will insert the relevant example code. 
 
 Generally, each example should be a self-contained complete sketch that will run on the reference website and which could be run directly if pasted into the web editor (for example).
 
@@ -595,70 +575,29 @@ We won’t go through the details about best practices and code style for the ex
 
 #### Providing multiple examples
 
-You can have multiple examples for one feature. To do so, after the previous `<div>` and `<code>` block is closed, add a blank line, an an additional `@example` tag and new `<div>` and `<code>` block.  
+You can have multiple examples for one feature. These should be separated by a blank line and a new @example tag.
 
 Example:
 
 ```
 * @example
-* <div>
-* <code>
 * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, OPEN);
 * describe('An ellipse created using an arc with its top right open.');
-* </code>
-* </div>
 *
 * @example
-* <div>
-* <code>
 * arc(50, 50, 80, 80, 0, PI, OPEN);
 * describe('The bottom half of an ellipse created using arc.');
-* </code>
-* </div>
 ```
 
-### Preventing execution of example code with @norender
+### Preventing execution of example code with `norender`
 
-If you do not want the reference page to execute your example code (i.e., you just want the code to show up), include the class "`norender`" in the `<div>`:
+If you do not want the reference page to run an example's code (i.e., you only want the _code_ to be shown, not its result), follow the `@example` tag with `// META:norender` on the next line:
 
 ```
 * @example
-* <div class="norender">
-* <code>
+* // META:norender
 * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, OPEN);
 * describe('ellipse created using arc with its top right open');
-* </code>
-* </div>
-```
-### Preventing automated-testing of example code with @notest
-
-If you do not want the example to be run as part of the automated tests (for example, if the example requires user interaction), include the class "`notest`" in the `<div>`:
-
-```
-* @example
-* <div class='norender notest'><code>
-* function setup() {
-*   let c = createCanvas(100, 100);
-*   saveCanvas(c, 'myCanvas', 'jpg');
-* }
-* </code></div>
-```
-### Requiring browser features for example code
-
-In some cases, the example code may be intended to demonstrate  p5.js functionality that depends on a feature that is not universally available on all browsers or devices (most notably, WebGL).  Rather than having this code run and break on incompatible browsers, use the "modernizr" attribute along with the name of the required feature.  At runtime, if that feature is not detected on the user's browser, the code will not be executed.  ([Features are listed here](https://modernizr.com/docs/#features).)
-
-Example:
-This example code will not try to run if WebGL is not available to the user's browser.
-
-```js
-* @example
-* <div modernizr='webgl'>
-* <code>
-* function setup() {
-*   createCanvas(100, 100, WEBGL);
-* }
-* </code>
-* </div>
 ```
 
 ## <a id="assets-in-examples"></a>Using assets in examples and descriptions
@@ -705,8 +644,6 @@ Finally, for every example you add, you are required to use the p5.js function `
 
 ```js
 * @example
-* <div>
-* <code>
 * let xoff = 0.0;
 * function draw() {
 *   background(204);
@@ -715,11 +652,8 @@ Finally, for every example you add, you are required to use the p5.js function `
 *   line(n, 0, n, height);
 *   describe('A vertical line moves randomly from left to right.');
 * }
-* </code>
-* </div>
 *
-* <div>
-* <code>
+* @example
 * let noiseScale = 0.02;
 * function draw() {
 *   background(0);
@@ -730,8 +664,6 @@ Finally, for every example you add, you are required to use the p5.js function `
 *   }
 *   describe('A horizontal wave pattern moves in the opposite direction of the mouse.');
 * }
-* </code>
-* </div>
 ```
 
 For more on `describe()` visit the [web accessibility contributor documentation](./web_accessibility/#describe), and the [Writing Accessible Canvas Descriptions](https://beta.p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
@@ -978,8 +910,6 @@ getRow (r) {
 * YUIDoc requires function names be provided with the `@method` tag, whereas JSDoc can generally extract that information from the implementation source code.
 
 * JSDoc does not have either `@submodule` or `@for` tags (YUIDoc does) but we continue to use them throughout the v2.x codebase as a mechanism by which we group functions, variables, and classes on the website. If you run `documentation lint` you'll see complaints about these tags but Documentation.js collects the tagged information into its output without problem for the subsequent build-processes to use.
-
-* YUIDoc code examples (tagged with @example) are automatically wrapped with `<span>` and other markup.  For documentation.js, we write the wrapping `<div>` and `<code>` elements around the example code ourselves.
 
 ### Other documentation differences between versions
 
