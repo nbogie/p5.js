@@ -506,6 +506,30 @@ If a function has multiple possible parameter options, you can specify each indi
 
 It is not necessary to create a separate signature if the only difference between two signatures is the addition of an optional parameter. Limit the use of this feature if possible because it can create unnecessary noise in the reference.
 
+#### Additional info: Dynamically generated methods
+
+For dynamically generated methods, do the same as usual, but add `@for p5`.
+
+```js
+function myAddon(p5, fn) {
+  for (const key of ['nameA', 'nameB']) {
+    fn[key] = function() {
+      return `Hello from ${key}!`;
+    };
+  }
+
+  /**
+   * @method nameA
+   * @for p5
+   */
+
+  /**
+   * @method nameB
+   * @for p5
+   */
+}
+```
+
 #### Rare issues with more complex types
 
 The types specified for function parameters, return values, variables, and object properties are used not only to build the online reference but also to build type-declaration files.
@@ -719,23 +743,26 @@ For more on `describe()` visit the [web accessibility contributor documentation]
 
 With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usages of JSDoc reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
 
-There is also some coverage of these tags in the [JSDoc best practices](./jsdoc/) document.
-
-
 ### `@private` tag
 
-You can use the `@private` if a property or variable is a private function or variable. If a feature is marked as `@private` it will not be included as part of the rendered reference on the website. The reason to use the `@private` tag to mark a reference comments block as private is when you document internal features for the library itself. For example, see the reference comments for `_start` below:
+You can use the `@private` if a property or variable or class is private. If a feature is marked as `@private` it will not be included as part of the rendered reference on the website.  This is done automatically for methods whose names start with `_`.
 
+The tag is used when documenting internal features for the library itself.
 
+Example: 
+
+Here's `invert` from `src/image/filters.js`:
 
 ```js
 /**
- * _start calls preload() setup() and draw()
- *
- * @method _start
+ * Sets each pixel to its inverse value. 
+ * No parameter is used.
  * @private
+ * @param  {Canvas} canvas
  */
-p5.prototype._start = function () {
+invert(canvas) {
+  //...
+}
 ```
 
 ### `@module` and related tags
@@ -750,14 +777,32 @@ The convention p5.js follows is that each subfolder in the `src/` folder will be
 
 On the website, the [top-level reference page](https://beta.p5js.org/reference) presents a list functions and variables grouped by their modules and submodules.
 
-Examples:
+Examples of module + submodule groupings
 
-The ["Image" module](https://beta.p5js.org/reference/#Image) in `src/image` has the following submodules: "Loading & Displaying", "Pixels", and "p5.Image".
+The ["Image" module](https://beta.p5js.org/reference/#Image) in `src/image/` has the following submodules: "Loading & Displaying", "Pixels", and "p5.Image".
 
-The ["Color" module](https://beta.p5js.org/reference/#Color) in `src/color` has the following submodules: 
+The ["Color" module](https://beta.p5js.org/reference/#Color) in `src/color/` has the following submodules: 
  "Creating & Reading", "Setting", and "Color Conversion".
 
-The _conceptual_ ["3D" module](https://beta.p5js.org/reference/#3D) documents code  mostly from `src/webgl` (there is no `src/3D`), and has the following submodules: "Camera", "Interaction", "Lights", "Material", "strands", "p5.Camera", "p5.Shader".
+The _conceptual_ ["3D" module](https://beta.p5js.org/reference/#3D) documents code  mostly from `src/webgl/` (there is no `src/3D/`), and has the following submodules: "Camera", "Interaction", "Lights", "Material", "strands", "p5.Camera", "p5.Shader".
+
+Examples:
+
+For just a category: 
+```
+/**
+ * @module Rendering
+ */
+```
+
+For both:
+
+```
+/**
+ * @module Data
+ * @submodule LocalStorage
+ */
+```
 
 #### The `@for` tag
 
@@ -794,47 +839,131 @@ Example of `@for` and `@requires`
  */
 ```
 
-### `@class` tag
+### Creating and documenting classes
 
-Class constructors are defined with the `@class` tag and the `@constructor` tag. The format for this block is similar to how a function is defined with the `@method` block, the class’s name will need to be defined with the `@class` tag and the `@constructor` tag will indicate the class has a constructor function. See the example below for the `p5.Color` class:
+It's unlikely you'll need the following more advanced material unless you're creating new classes.
+
+Classes are to be created *outside* of the addon function, and assigned to `p5` *inside*.  The class name should be the same always:
 
 ```js
+class MyClass {
+  // ...
+}
+
+export default function myAddon(p5, fn) {
+    p5.MyClass = MyClass;
+}
+```
+
+Document class methods directly above the members in classes, *without* a `@method` tag:
+
+```js
+class MyClass {
+  /**
+   * Description goes here
+    */
+  myMethod() {
+    return 4;
+  }
+}
+```
+
+Documentation for the class itself should go at the spot where the class is added to `p5` and not right next to the class definition. This needs to include the `@class` tag, including a `p5.` prefix on the class name. Also include the parameters for the constructor in this description, if they exist.
+
+```js
+class MyClass {
+  constructor(n) {
+    this.n = n;
+  }
+}
+
+export default function myAddon(p5, fn) {
+  /**
+   * Description of the class goes here!
+    *
+    * @class p5.MyClass
+    * @param {Number} n A number to pass in
+    */
+    p5.MyClass = MyClass;
+}
+```
+
+Here's an excerpt of the `p5.Color` class:
+
+```js
+class Color {
+  //...
+}
+
+function color(p5, fn, lifecycles){
 /**
- * A class to describe a color. Each
- * `p5.Color` object stores the color mode and
- * level maxes that were active during its
- * construction. These values are used to
- * interpret the arguments passed to the
- * object's constructor. They also determine
- * output formatting such as when <a
- * href="#/p5/saturation">saturation()</a> is
- * called.
+ * A class to describe a color.
  *
- * Color is stored internally as an array of
- * ideal RGBA values in floating point form,
- * normalized from 0 to 1. These values are
- * used to calculate the closest screen
- * colors, which are RGBA levels from 0 to
- * 255. Screen colors are sent to the
- * renderer.
+ * Each `p5.Color` object stores the color mode
+ * and level maxes that were active during its 
+ * construction. These values are used to 
+ * interpret the arguments passed to the 
+ * object's constructor. They also determine 
+ * output formatting such as when
+ * <a href="#/p5/saturation">saturation()</a> 
+ * is called.
  *
- * When different color representations are
- * calculated, the results are cached for
- * performance. These values are normalized,
+ * Color is stored internally as an array of 
+ * ideal RGBA values in floating point form, 
+ * normalized from 0 to 1. These values are 
+ * used to calculate the closest screen colors,
+ * which are RGBA levels from 0 to 255. Screen
+ * colors are sent to the renderer.
+ *
+ * When different color representations are 
+ * calculated, the results are cached for 
+ * performance. These values are normalized, 
  * floating-point numbers.
  *
- * <a href="#/p5/color">color()</a> is the
- * recommended way to create an instance of
+ * Note: <a href="#/p5/color">color()</a> is 
+ * the recommended way to create an instance of
  * this class.
  *
  * @class p5.Color
- * @constructor
- * @param {p5} [pInst] pointer to p5 instance.
+ * @param {p5} pInst    pointer to p5 instance.
  *
- * @param {Number[]|String} vals an array 
- * containing the color values for red, 
- * green, blue and alpha channel or CSS color.
+ * @param {Number[]|String} vals       an array
+ *  containing the color values for red, green,
+ *  blue and alpha channel or CSS color.
  */
+/**
+ * @class p5.Color
+ * @param {Number[]|String} vals
+ */
+p5.Color = Color;
+```
+
+
+Documentation for class properties should appear after the class is added to `p5`, not within the class itself. It needs to have the `@for` tag referencing its class, and the `@property` tag naming the property itself:
+
+```js
+class MyClass {
+  myProperty;
+  constructor() {
+    myProperty = 2;
+  }
+}
+
+export default function myAddon(p5, fn) {
+  /**
+   * Description of the class goes here!
+    *
+    * @class p5.MyClass
+    */
+    p5.MyClass = MyClass;
+
+    /**
+    * Description of the property goes here!
+    *
+    * @property {Number} myProperty
+    * @for p5.MyClass
+    */
+}
 ```
 
 ## Generating and previewing the reference
