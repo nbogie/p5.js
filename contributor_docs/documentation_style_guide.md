@@ -48,7 +48,7 @@ We use [documentation.js](https://documentation.js.org/) to generate the p5.js A
 
 Refer to the [inline documentation guide](./contributing_to_the_p5js_reference.md) for more information on how to structure the documentation comments and what tags to use.
 
-It also discusses how to generate and preview the reference documentation to see your changes.
+It also discusses how to [generate and preview the reference documentation](./contributing_to_the_p5js_reference.md#generating-and-previewing-the-reference) to see your changes.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -139,7 +139,7 @@ Always use `let` to declare variables.
 
 **Accessibility terminology**
 
-The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
+The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/disability-and-health/articles-documents/communicating-with-and-about-people-with-disabilities.html).
 
 | Recommended | Not Recommended |
 | -- | -- |
