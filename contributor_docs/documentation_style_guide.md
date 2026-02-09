@@ -48,7 +48,7 @@ We use [documentation.js](https://documentation.js.org/) to generate the p5.js A
 
 Refer to the [inline documentation guide](./contributing_to_the_p5js_reference.md) for more information on how to structure the documentation comments and what tags to use.
 
-It also discusses how to [generate and preview the reference documentation](./contributing_to_the_p5js_reference.md#generating-and-previewing-the-reference) to see your changes.
+It also discusses how to [generate and preview the reference documentation](./contributing_to_the_p5js_reference/#generating-and-previewing-the-reference) to see your changes.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -1288,7 +1288,7 @@ async function setup() {
 }
 ```
 
-There is more on working with assets in the guide: [Contributing to the p5.js reference](./contributing_to_the_p5js_reference#assets-in-examples).
+There is more on working with assets in the guide: [Contributing to the p5.js reference](./contributing_to_the_p5js_reference/#using-assets).
 
 
 **[⬆ back to top](#table-of-contents)**

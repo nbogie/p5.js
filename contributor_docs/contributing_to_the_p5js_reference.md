@@ -11,10 +11,10 @@
 * [Reference comment blocks for functions](#reference-comment-blocks-for-functions)
 * [Reference comment blocks for p5.js variables](#reference-comment-blocks-for-p5js-variables)
 * [Adding examples](#adding-examples)
-* [Using assets in examples and descriptions](#using-assets-in-examples-and-descriptions)
+* [Using assets in examples and descriptions](#using-assets)
 * [Less common JSDoc tags](#less-common-jsdoc-tags)
 * [Generating and previewing the reference](#generating-and-previewing-the-reference)
-* [Linting the comments to find errors](#linting-the-comments-to-find-errors)
+* [Linting the comments to find errors](#linting-the-docs)
 * [Next steps](#next-steps)
 
 
@@ -285,7 +285,7 @@ Example URLS:
 In some cases it may be desirable to include, in the description, images or audio or video to help explain or demonstrate a function's working.
 For an example of this see the reference for [`applyMatrix`](https://beta.p5js.org/reference/p5/applymatrix/).
 
-_Hosting_ of these images is discussed later in [this section on assets](#assets-in-examples).
+_Hosting_ of these images is discussed later in [this section on assets](#using-assets).
 
 To _link_ to it, you would use an HTML `img` element, with `src` property referring to the image in `assets/`.  Be sure to also include an appropriate `alt` property.
 
@@ -647,7 +647,7 @@ If you do not want the reference page to run an example's code (i.e., you only w
 * describe('ellipse created using arc with its top right open');
 ```
 
-## <a id="assets-in-examples"></a>Using assets in examples and descriptions
+## <a id="using-assets"></a>Using assets in examples and descriptions
 
 If your example code (or the description section) uses asset files (e.g. images, fonts, sounds), here's how to work with them.
 1. Add the asset file(s) in the _p5.js-website_ repo's [/public/assets](https://github.com/processing/p5.js-website/tree/2.0/public/assets) folder.
@@ -847,27 +847,26 @@ In some editors, such as vs code, you can hover over a function or variable to s
 
 At some point you will want to preview how your changes will look on the website.  This involves run the website locally and having it import your p5.js code from a branch of your repo.
 
-Note: the following instructions currently co-exist here and in the website repo file: [/docs/scripts.md in the section "testing the docs of your fork"](https://github.com/processing/p5.js-website/blob/2.0/docs/scripts.md#testing-the-docs-of-your-fork)).
-
 Steps: 
 
 1. Commit your changes to a local branch of your fork of the p5.js repo.  The changes don't need to be pushed to github for this purpose, but they do need to be committed on a branch.
 1. Clone [the p5.js-website repo](https://github.com/processing/p5.js-website/tree/2.0) locally.
-1. In your new p5.js-website repo, check out the branch "2.0".
-1. In your new p5.js-website repo, run `npm install`
-1. In your new p5.js-website repo, run the following command, using the path to your local p5.js repo before the `#`, and the name of your branch after the `#`:
+1. Open a terminal in your new p5.js-website repo
+1. Check out the branch "2.0"
+1. Run `npm install`
+1. Run the following command, using the path to **your** local p5.js repo before the `#`, and the name of **your** branch after the `#`:
 
 ```sh
-npm run custom:dev path/to/local/repo#yourBranch
+npm run custom:dev path/to/YOUR/local/repo#yourBranch
 ```
 
-For example, if your work is in a branch called `my-amazing-branch` on a local p5.js repo called `p5.js` as a sibling directory next to the current p5.js-website directory, you could run the following:
+For example, if your work is in a branch called `my-amazing-branch` on a local p5.js repo called `p5.js` as a sibling directory next to the current `p5.js-website` directory, you could run the following:
 
 ```sh
 npm run custom:dev ../p5.js#my-amazing-branch
 ```
 
-This will build the local website reference pages from the data in your branch and start a development preview of the website.  
+This will build the local website reference pages from the data in your branch and then start a development preview of the website.  
 
 6. Find the URL that is logged in the console and visit it in your browser in order to test out your changes.
 
@@ -877,16 +876,6 @@ If you prefer to preview work that's already on github, you can do so.  Use the 
 npm run custom:dev https://github.com/yourUsername/p5.js.git#yourBranch
 ```
 
-#### Limitations
-
-The website won't be _fully_ functional when partially prepared in this way.  Notably:
-
-* links between pages may be broken
-  * You'll need to manually add a trailing slash '/'
-* The search facility will not work
-  * Look into `npm run build:search` to build the necessary index files
-  * ...or just find your function/variable in the [top-level listing](https://beta.p5js.org/reference/).
-
 #### Resetting your changes
 
 When you're done with this preview, you can run this command to reset your changes:
@@ -894,7 +883,24 @@ When you're done with this preview, you can run this command to reset your chang
 npm run custom:cleanup
 ```
 
-## Linting the comments to find errors
+#### Troubleshooting
+
+* [Run the documentation linter](#linting-the-docs) on your source files.
+* Review the log from the above `custom:dev` process, for mentions of your code.
+* Don't forget that if you're [using local asset files](#using-assets), they'll need to be in the _website_ repo.
+
+#### Limitations
+
+The website won't be _fully_ functional when partially prepared in this way.  Notably:
+
+* Links between pages may be broken:
+  * You'll need to ensure local links end with a trailing slash '/', to be matched by Astro.
+* The search facility will not work by default
+  * Look into `npm run build:search` to build the necessary index files.
+  * ...or just find your function/variable in the [top-level listing](https://beta.p5js.org/reference/).
+
+
+## <a id="linting-the-docs"></a>Linting the comments to find errors
 
 The documentation.js tool can also be used for "linting".  This is a process which will look for content in the comment blocks that the tool doesn't understand, or thinks might be incorrect.
 
