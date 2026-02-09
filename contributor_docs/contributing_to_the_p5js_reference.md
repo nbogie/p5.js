@@ -16,7 +16,7 @@
 * [Generating and previewing the reference](#generating-and-previewing-the-reference)
 * [Linting the comments to find errors](#linting-the-docs)
 * [Next steps](#next-steps)
-
+* [Appendix: Summary of differences with p5.js v1.x](#doc-differences-v1-to-v2)
 
 In p5.js, we author the code reference you see on the [reference](https://beta.p5js.org/reference/) page on the p5.js website by including specialized comments alongside the library’s source code. For each p5 function, for example, a reference comment includes the name and description of the function, details of its parameters and return value, and examples of use. The content you see on each p5.js function/variable’s reference page is built from these reference comments in the source code.
 
@@ -470,7 +470,9 @@ Returning a Promise.  (From [loadFilterShader()](https://beta.p5js.org/reference
 resolves with a shader object.
 ```
 
-### Additional info: Chaining
+### Advanced function documentation notes
+
+#### Chaining
 
 If the method returns the parent object, you can skip the `@return` tag and add this line instead:
 
@@ -478,8 +480,7 @@ If the method returns the parent object, you can skip the `@return` tag and add 
 @chainable
 ```
 
-
-### Additional info: Multiple function signatures
+#### Multiple function signatures
 
 If a function has multiple possible parameter options, you can specify each individually. For example, the [`background()`](https://beta.p5js.org/reference/p5/background/) function takes a number of different parameter options (see "Syntax" section on the reference page). Choose one version to list as the first signature using the template above. After the end of the first reference comment block, you can add additional signatures, each in its own block, using only the `@method` and `@param` tags following the example below.
 
@@ -502,11 +503,77 @@ If a function has multiple possible parameter options, you can specify each indi
 ```
 
 
-#### Additional info: Multiple signatures vs optional parameter
+#### Multiple signatures vs optional parameter
 
 It is not necessary to create a separate signature if the only difference between two signatures is the addition of an optional parameter. Limit the use of this feature if possible because it can create unnecessary noise in the reference.
 
-#### Additional info: Dynamically generated methods
+
+#### Static and instance methods with same name
+
+When a class provides instance and static methods of the same name, only one will currently be presented in the online reference.
+
+Document the instance method as normal.  However, at the end of its description, mention that there is also a static version and describe its parameters and return in plain text.
+
+This is the documentation that will be presented in the reference.
+
+In a separate comment block for the static method, document its parameters and return value.  Even though these will not currently be shown on the reference website, they're important in the generation of the library's type declarations (e.g. for intellisense and auto-completion) (and may eventually be incorporated into the reference page).
+
+Example: 
+
+The p5.Vector class has an instance method [add()](https://beta.p5js.org/reference/p5.vector/add/), and a static `add()` method, too.
+
+Here's (a simplification of) the documentation of the _instance_ method.  Note that the description also mentions the static version.
+
+```js
+/**
+ * Adds to a vector's components.
+ *
+ * `add()` can use separate numbers, as in `v.add(1, 2, 3)`,
+ * another <a href="#/p5.Vector">p5.Vector</a> object, as in `v.add(v2)`, or
+ * an array of numbers, as in `v.add([1, 2, 3])`.
+ *
+ * ... omitted ...
+ *
+ * The static version of `add()`, as in `p5.Vector.add(v2, v1)`, returns a new
+ * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
+ * originals.
+ *
+ * @param  {Number|Array} x   x component of 
+ * the vector to be added or an array of 
+ * components.
+ * @param  {Number} [y] y component of the 
+ * vector to be added.
+ * @param  {Number} [z] z component of the 
+ * vector to be added.
+ *
+ * @example
+ * //omitted
+ */
+add(...args) {
+  ...
+}
+```
+Here is the documentation of the static method:
+
+```js
+// Adds two vectors together and returns a new one.
+/**
+  * @static
+  * @param  {p5.Vector} v1 A 
+  * <a href="#/p5.Vector">p5.Vector</a> to add
+  * @param  {p5.Vector} v2 A 
+  * <a href="#/p5.Vector">p5.Vector</a> to add
+  * @param  {p5.Vector} [target] vector to 
+  * receive the result.
+  * @return {p5.Vector} resulting 
+  * <a href="#/p5.Vector">p5.Vector</a>.
+  */
+static add(v1, v2, target) {
+  //...
+}
+```
+
+#### Dynamically generated methods
 
 For dynamically generated methods, do the same as usual, but add `@for p5`.
 
@@ -701,8 +768,6 @@ You may wish to make use of an asset that's already in that directory, linking t
 
 ### Hotlinking asset files in examples
 
-<!-- TODO: check policies here - what follows is just a sketched placeholder. -->
-
 Whilst it is technically possible to hotlink to an asset file hosted elsewhere (such as [wikimedia commons](https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia/technical)) when permitted by the copyright license and hosting provider, anyone could later change, vandalize, rename, or delete that hotlinked asset.
 
 (It also makes offline copies of the reference much harder to produce.)
@@ -825,8 +890,6 @@ Example:
 
 The `@requires` tag defines the required imported modules that the current module depends on.
 
-<!-- TODO: clarify where this @requires info is made use of.  What responsibilities does the author have to state these correctly and comprehensively? -->
-
 Example of `@for` and `@requires`
 
 ```js
@@ -838,7 +901,69 @@ Example of `@for` and `@requires`
  * @requires constants
  */
 ```
+#### The @beta tag - marking experimental API features
 
+This tag is used to mark that a feature is experimental and that its details may change or it may be removed.  A warning will be presented explaining this on the reference page.
+
+It should be placed on a separate line in the comment block and does not need any argument.
+```js
+
+  /**
+   * Create a new shader that can change how 
+   * fills are drawn.
+   *
+   * ...omitted...
+   *
+   * @method buildMaterialShader
+   * @submodule p5.strands
+   * @beta
+   * @param {Function} callback A function 
+   * building a p5.strands shader.
+   * @returns {p5.Shader} The material shader.
+   */
+```
+
+#### The @deprecated tag
+
+Marks that a feature will be removed from a future version of p5.js, possibly also indicating a better option.
+
+Follow the tag with: 
+* Text explaining that the feature will be removed from a future version.
+* (If possible) A suggested replacement to be used (with link).
+
+Example (imagined):
+
+```js
+/**
+* Create a p5.Vector from polar coordinates.
+*
+* @method createVectorFromPolarCoordinates
+* @deprecated This will be removed from a 
+* future version of p5.js.  
+* <a href="#/p5.Vector/fromAngle">
+* p5.Vector.fromAngle()</a> is recommended, 
+* instead.
+*/
+```
+
+Example (real):
+
+```js
+/**
+* Splits a `String` into pieces and returns an 
+* array containing the pieces.
+*
+* @method splitTokens
+* @deprecated This will be removed in a future 
+*  version of p5.js to make way for a new, 
+*  friendlier version :)
+* @param  {String} value string to split.
+* @param  {String} [delim] character(s) to use 
+                      for splitting the string.
+* @return {String[]} separated strings.
+*
+*/
+```
 ### Creating and documenting classes
 
 It's unlikely you'll need the following more advanced material unless you're creating new classes.
@@ -1078,15 +1203,14 @@ getRow (r) {
 
 ## Next steps
 
-* We also have a [JSDoc best practices](https://beta.p5js.org/contribute/jsdoc/) document.
-* For additional details about the reference system, you can checkout the documentation for [JSDoc](https://jsdoc.app/)
-* For in-depth detail on how the reference generation process works, see [reference generation process](./reference_generation_process/).
+* If you haven't already, be sure to read the [contributor guidelines](./contributor_guidelines/).
+* If you want more detail on JSDoc tags, check out the official documentation [JSDoc](https://jsdoc.app/).
+* If you're curious, you can read about p5.js's [reference generation process](./reference_generation_process/) (but it's not required!)
 * For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). 
-* The [contributor guidelines](./contributor_guidelines/) document is also a good place to start.
 
 ## <a id="doc-differences-v1-to-v2"></a>Appendix: Summary of documentation differences between p5.js v1 and v2
 
-**Overview: Syntax and tooling per p5.js version**
+### Overview: Syntax and tooling per p5.js version
 
 * in p5 v2, documentation comments are:
   * written in JSDoc syntax
@@ -1132,5 +1256,4 @@ For p5 v2.x:
   * ...
  */
  ```
-
-* The documentation is generated with the tool documentation.js, not the YUIDoc tool.  See [Reference generation process](./reference_generation_process/).
+* p5 v2.x no longer uses `<div><code>` wrappers around code examples.
