@@ -8,10 +8,11 @@
 
 ## Table of Contents
 * [A quick introduction to reference comments](#a-quick-introduction-to-reference-comments)
-* [Reference comment blocks for functions](#reference-comment-blocks-for-functions)
-* [Reference comment blocks for p5.js variables](#reference-comment-blocks-for-p5js-variables)
+* [Documenting functions](#documenting-functions)
+* [Documenting p5.js variables](#documenting-p5js-variables)
 * [Adding examples](#adding-examples)
 * [Using assets in examples and descriptions](#using-assets)
+* [Linking to other p5.js features](#linking)
 * [Less common JSDoc tags](#less-common-jsdoc-tags)
 * [Generating and previewing the reference](#generating-and-previewing-the-reference)
 * [Linting the comments to find errors](#linting-the-docs)
@@ -63,7 +64,7 @@ Anything in a block in this manner will be interpreted as reference documentatio
 
 In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next.
 
-## Reference comment blocks for functions
+## Documenting functions
 
 In abstract, a comment block for a p5 _function_ typically looks as follows.  (We've included the tags that will mark each section but the correct syntax will be shown shortly).
 
@@ -175,7 +176,7 @@ If you like, you can find the source code for this `sin` function in the p5 repo
 
 Now we'll look at each section in turn.
 
-### <a id="@description"></a>Describing the function
+### <a id="description"></a>Describing the function
 
 Example: 
 
@@ -208,9 +209,8 @@ In some places, you may see the  `@description` tag used.  It explicitly marks t
 
 #### The first sentence of the description
 
-The first sentence in the description, in particular, should concisely summarize what the function does.  It will almost always be necessary to omit detail here. 
-
-This first sentence will sometimes be presented alone with the function name (e.g. in [the function list](https://beta.p5js.org/reference/#Shape) on the front page of the reference website, where it can help the reader understand quickly if the function is what they're looking for.
+The first sentence in the description, in particular, should concisely summarize what the function does.  
+It may be presented alone with the function name in listings (e.g. in [the function list](https://beta.p5js.org/reference/#Shape) on the front page of the reference website), where it should help the reader understand quickly if the function is what they're looking for.
 
 **Examples of first sentences of function descriptions**
 
@@ -253,67 +253,6 @@ Multiplies a vector by a scalar and returns a new vector.
 
 ```
 
-#### <a id="linking"></a>Linking to another p5.js feature
-
-A hyperlink HTML element (with the `a` tag) can be used within a description to link to the documentation of another relevant feature of the p5.js library.
-
-Example: 
-
-```
-<a href="#/p5/circle">circle()</a>
-```
-
-Note that the URL should _not_ include a direct link to the website.
-
-With the [exception of constants](#linking-to-constants), the URL should be of the following "fragment" or "hash" form: 
-
-`#/class/property`
-
-Example URLs linking to functions and variables:
-
-* `#/p5/circle`
-* `#/p5/createCanvas`
-* `#/p5/fill`
-* `#/p5/mouseX`
-* `#/p5.Vector/lerp`
-* `#/p5.Vector/dist`
-* `#/p5.Image/width`
-
-Examples URLS linking to classes:
-
-* `#/p5.Color`
-* `#/p5.Image`
-* `#/p5.Vector`
-
-As seen above, when there's no property involved, just a class itself, the second slash is generally omitted.
-
-Full examples:
-
-From the description of [dist](https://beta.p5js.org/reference/p5/dist/) in [calculation.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/calculation.js)
-```
-* Use <a href="#/p5.Vector/dist">p5.Vector.dist()</a> 
-* to calculate the distance between two 
-* <a href="#/p5.Vector">p5.Vector</a> objects.
-```
-
-From the description of [pmouseX](https://beta.p5js.org/reference/p5/pmousex/):
-```
-* Its value is <a href="#/p5/mouseX">mouseX</a>
-* from the previous frame.
-```
-
-<a id="linking-to-constants"></a>**Exception: Linking to constants**
-
-Links to constants should instead follow this form:
-
-`#/p5/constants/name-of-constant`
-
-Example URLS:
-
-* `#/p5/constants/DEGREES`
-* `#/p5/constants/CENTER`
-* `#/p5/constants/LEFT`
-
 #### Using images within the description section
 
 In some cases it may be desirable to include, in the description, images or audio or video to help explain or demonstrate a function's working.
@@ -336,7 +275,7 @@ Here's a cut-down example from the source of [`applyMatrix`](https://github.com/
  * ...
 ```
 
-### <a id="@method"></a>`@method` - specifying the function name
+### <a id="method"></a>`@method` - specifying the function name
 
 [`@method`](https://jsdoc.app/tags-function) is used to define the name of the function, in this case `sin`.  Note that the function name does not include the brackets `()`.  
 
@@ -344,7 +283,7 @@ You may sometimes see this missing from the reference.  In that case JSDoc will 
 
 This tag is also useful when detailing multiple signatures for a function (see later).
 
-### <a id="@param"></a>`@param` - specifying details of each parameter
+### <a id="param"></a>`@param` - specifying details of each parameter
 
 [`@param`](https://jsdoc.app/tags-param) is used to define the parameters or arguments that the function accepts.  It is used once per parameter.
 
@@ -451,7 +390,7 @@ Here's some of the documentation for `loadImage`, which has an optional paramete
 
 #### Links in param descriptions
 
-You can include links in the description of a parameter.  See [linking](#linking).
+You can include links in the description of a parameter.  For how to link to another reference page see [linking](#linking), later.
 
 Example:
 ```
@@ -460,7 +399,7 @@ Example:
 * the current <a href="#/p5/angleMode">angleMode()</a>.
 ```
 
-### <a id="@return"></a>`@return` - specifying the return value
+### <a id="return"></a>`@return` - specifying the return value
 
 [`@return`](https://jsdoc.app/tags-returns) is used to define the return value of the function.
 
@@ -482,7 +421,7 @@ If the function does not return a value, the `@return` tag can be left out.
 
 If the function returns a value but you want it to be type `any`, use `{*}`, e.g. `@return {*} description here...`
 
-You can include links in the description of a return.  See [linking](#linking).
+You can include links in the description of a return.  For how to link to another reference page see [linking](#linking), later.
 
 More examples of `@return`:
 
@@ -646,7 +585,7 @@ In this rare situation, it is possible to use a last-resort mechanism to inject 
 
 Bear in mind this is a last resort.  Try to correctly specify the types in the documentation comments wherever possible.
 
-## Reference comment blocks for p5.js variables
+## Documenting p5.js variables
 
 So far, we have looked at how to write references for functions.  Variables follow the same structure but use different tags.
 
@@ -679,7 +618,7 @@ Example: the reference comment block for the built-in variable, `mouseX`:
 
 The start of the block contains the description of the variable (`mouseX` in this case).   The same rules apply from function descriptions: Use a clear short first line, you can use markdown and HTML and assets in the description.
 
-### <a id="@property"></a>The `@property` tag
+### <a id="property"></a>The `@property` tag
 
 To define the name of the variable, we use [`@property`](https://jsdoc.app/tags-property) instead of `@method`. `@property` follows the same syntax as `@param` for defining the type and its name.
 
@@ -704,7 +643,7 @@ From [`src/image/p5.Image.js`](https://github.com/processing/p5.js/blob/dev-2.0/
 * @property {Number[]} pixels
 ```
 
-### <a id="@readonly"></a>The `@readonly` tag
+### <a id="readonly"></a>The `@readonly` tag
 
 The `@readonly` tag is present on most p5.js variables and is used internally to indicate this value should not be overwritten directly by a library user.
 
@@ -864,11 +803,80 @@ Finally, for every example you add, you are required to use the p5.js function `
 
 For more on `describe()` visit the [web accessibility contributor documentation](./web_accessibility/#describe), and the [Writing Accessible Canvas Descriptions](https://beta.p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
 
+
+## <a id="linking"></a>Linking to other p5.js features
+
+A hyperlink can be used within a description or `@param` or `@return` to link to the reference documentation of another relevant p5.js feature.
+
+Example: 
+
+```
+<a href="#/p5/circle">circle()</a>
+```
+
+Note that the URL should _not_ include a direct link to the website.
+
+With the [exception of constants](#linking-to-constants), the URL should be of the following "fragment" or "hash" form: 
+
+`#/class/property`
+
+Example URLs linking to functions and variables:
+
+* `#/p5/circle`
+* `#/p5/createCanvas`
+* `#/p5/fill`
+* `#/p5/mouseX`
+* `#/p5.Vector/lerp`
+* `#/p5.Vector/dist`
+* `#/p5.Image/width`
+
+Example URLs linking to classes:
+
+* `#/p5.Color`
+* `#/p5.Image`
+* `#/p5.Vector`
+
+As seen above, when there's no property involved, just a class itself, the second slash is generally omitted.
+
+Full examples:
+
+From the description of [dist](https://beta.p5js.org/reference/p5/dist/) in [calculation.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/calculation.js)
+```
+* Use <a href="#/p5.Vector/dist">p5.Vector.dist()</a> 
+* to calculate the distance between two 
+* <a href="#/p5.Vector">p5.Vector</a> objects.
+```
+
+From the description of [pmouseX](https://beta.p5js.org/reference/p5/pmousex/):
+```
+* Its value is <a href="#/p5/mouseX">mouseX</a>
+* from the previous frame.
+```
+
+From the `@return` statement of [createVector()](https://beta.p5js.org/reference/p5/createVector/):
+```
+* @return {p5.Vector} new 
+* <a href="#/p5.Vector">p5.Vector</a> object.
+```
+
+
+<a id="linking-to-constants"></a>**Exception: Linking to constants**
+
+Links to constants should instead follow this form:
+
+`#/p5/constants/name-of-constant`
+
+Example URLS:
+
+* `#/p5/constants/DEGREES`
+* `#/p5/constants/CENTER`
+* `#/p5/constants/LEFT`
+
 ## Less common JSDoc tags
 
 With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usages of JSDoc reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
 
-### <a id="@private"></a>`@private` tag
+### <a id="private"></a>`@private` tag
 
 You can use the `@private` if a property or variable or class is private. If a feature is marked as `@private` it will not be included as part of the rendered reference on the website.  This is done automatically for methods whose names start with `_`.
 
@@ -892,7 +900,7 @@ invert(canvas) {
 
 ### `@module` and related tags
 
-#### <a id="@module"></a>`@module` and `@submodule`
+#### <a id="module"></a>`@module` and `@submodule`
 
 At the top of each source code file will be a comment block with a `@module` tag. A module is a top-level grouping of features in the reference pages on the website.  This does _not_ necessarily correspond to any specific software `module` concept in the code itself.
 
@@ -929,7 +937,7 @@ For both:
  */
 ```
 
-#### <a id="@for"></a>The `@for` tag
+#### <a id="for"></a>The `@for` tag
 
 The `@for` tag defines the relationship between this module and the overall `p5` class, effectively saying this module is a part of the `p5` class.
 
@@ -961,7 +969,7 @@ Example of `@for` and `@requires`
  * @requires constants
  */
 ```
-#### <a id="@beta"></a>The @beta tag - marking experimental API features
+#### <a id="beta"></a>The @beta tag - marking experimental API features
 
 This tag is used to mark that a feature is experimental and that its details may change or it may be removed.  A warning will be presented explaining this on the reference page.
 
@@ -983,7 +991,7 @@ It should be placed on a separate line in the comment block and does not need an
    */
 ```
 
-#### <a id="@deprecated"></a>The @deprecated tag
+#### <a id="deprecated"></a>The @deprecated tag
 
 Marks that a feature will be removed from a future version of p5.js, possibly also indicating a better option.
 
@@ -1274,25 +1282,25 @@ getRow (r) {
 
 Click on any tag to go to its section in the text.
 
-| Tag                           | Usage                            | Notes                                              |
-|-------------------------------|----------------------------------|----------------------------------------------------|
-| [@method](#@method)           | @method name                     | Omitted in certain cases.                          |
-| [@description](#@description) | @description text here           | If omitted, uses first text before _any_ tag.      |
-| [@param](#@param)             | @param \{type\} name Description | Name must match the function parameter.            |
-| [@return](#@return)           | @return \{type\} Description     | Omit type if it returns undefined.                 |
-| [@example](#adding-examples)  | @example Code on next lines...   | Each gets `@example` before and a newline after.   |
-| [\`\`\`js example](#inserted-examples)  | \`\`\`js example       | Insert early examples _within_ the description.    |
-| [@chainable](#@chainable)     | @chainable                       | Instead of `@return`, if it returns same object.   |
-| [@property](#@property)       | @property \{type\} name          | Most p5 variables are properties of p5 class.      | 
-| [@readonly](#@readonly)       | @readonly                        | Mark that a property is not writeable by the user. |
-| [@static](#@static)           | @static                          | Static method or property of a class.              |
-| [@for](#@for)                 | @for className                   | Associate a feature with a class.                  |
-| [@module](#@module)           | @module                          | Groups features for display.                       |
-| [@submodule](#@module)        | @submodule                       | Groups features for display.                       |
-| [@class](#@class)             | @class                           | Marks a class.                                     |
-| [@beta](#@beta)               | @beta                            | Mark an experimental feature.                      |
-| [@deprecated](#@deprecated)   | @deprecated                      | A deprecated feature is intended to be removed.    |
-| [@private](#@private)         | @private                         | Internal details not for publishing.               |
+| Tag                          | Usage                            | Notes                                              |
+|------------------------------|----------------------------------|----------------------------------------------------|
+| [@method](#method)           | @method name                     | Omitted in certain cases.                          |
+| [@description](#description) | @description text here           | If omitted, uses first text before _any_ tag.      |
+| [@param](#param)             | @param \{type\} name Description | Name must match the function parameter.            |
+| [@return](#return)           | @return \{type\} Description     | Omit type if it returns undefined.                 |
+| [@example](#adding-examples) | @example Code on next lines...   | Each gets `@example` before and a newline after.   |
+| [\`\`\`js example](#inserted-examples)  | \`\`\`js example       | Insert early examples _within_ the description.   |
+| [@chainable](#chaining)      | @chainable                       | Instead of `@return`, if it returns same object.   |
+| [@property](#property)       | @property \{type\} name          | Most p5 variables are properties of p5 class.      | 
+| [@readonly](#readonly)       | @readonly                        | Mark that a property is not writeable by the user. |
+| [@static](#static)           | @static                          | Static method or property of a class.              |
+| [@for](#for)                 | @for className                   | Associate a feature with a class.                  |
+| [@module](#module)           | @module                          | Groups features for display.                       |
+| [@submodule](#module)        | @submodule                       | Groups features for display.                       |
+| [@class](#class)             | @class                           | Marks a class.                                     |
+| [@beta](#beta)               | @beta                            | Mark an experimental feature.                      |
+| [@deprecated](#deprecated)   | @deprecated                      | A deprecated feature is intended to be removed.    |
+| [@private](#private)         | @private                         | Internal details not for publishing.               |
 
 
 ## <a id="doc-differences-v1-to-v2"></a>Appendix: Summary of documentation differences between p5.js v1 and v2
