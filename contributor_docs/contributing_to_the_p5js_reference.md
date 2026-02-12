@@ -16,11 +16,14 @@
 * [Generating and previewing the reference](#generating-and-previewing-the-reference)
 * [Linting the comments to find errors](#linting-the-docs)
 * [Next steps](#next-steps)
+* [Appendix: Tags quick reference](#tags-quick-reference)
 * [Appendix: Summary of differences with p5.js v1.x](#doc-differences-v1-to-v2)
 
 In p5.js, we author the code reference you see on the [reference](https://beta.p5js.org/reference/) page on the p5.js website by including specialized comments alongside the library’s source code. For each p5 function, for example, a reference comment includes the name and description of the function, details of its parameters and return value, and examples of use. The content you see on each p5.js function/variable’s reference page is built from these reference comments in the source code.
 
 This document will show you how to write and format the reference comments so that they can eventually be rendered onto the website correctly. You should follow this guide whenever you are editing or writing a reference for any p5.js function or variable.
+
+If you are already familiar, you might prefer the [tags quick reference](#tags-quick-reference) included at the end.
 
 If you're looking to learn about the build process that generates the reference documentation from the source-code comments, see instead [Reference generation process](./reference_generation_process/)
 
@@ -32,7 +35,67 @@ This document describes how to work with p5.js version 2.x, whose reference docu
 
 ## A quick introduction to reference comments
 
-When you look at the source code of p5.js, you will see many lines in the library being reference comments; they look like this:
+When you look at the source code of p5.js, you will see many lines in the library being reference comments; they vary but often have this sort of form:
+
+```js
+/**
+ * Draws a circle.
+ *
+ * A much longer description normally goes here
+ *
+ * @method circle
+ * @param  {Number} x x-coordinate of centre.
+ * @param  {Number} y y-coordinate of centre.
+ * @param {Number} diameter Diameter of circle.
+ *
+ * @example
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   //Draw circle at (50, 0) with diameter 70.
+ *   circle(50, 0, 70);
+ * }
+ */
+```
+
+These reference comments are usually followed by the actual JavaScript code that defines the function. Reference comments always start with `/**` and end with `*/`, with each line in between the two starting with `*`.  
+
+Anything in a block in this manner will be interpreted as reference documentation. These generally follow a format called [JSDoc](https://jsdoc.app/).
+
+In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next.
+
+## Reference comment blocks for functions
+
+In abstract, a comment block for a p5 _function_ typically looks as follows.  (We've included the tags that will mark each section but the correct syntax will be shown shortly).
+
+```js
+/**
+ * One-line description of the function.
+ *
+ * More detail about the function's behavior.  
+ * This can be many paragraphs and include 
+ * links and images.
+ *
+ * The name of function - with @method
+ * Detail of a function parameter - with @param
+ * Detail of a function parameter - with @param
+ * ... more parameters
+ * Optional detail about return - with @return
+ *
+ * Example of use - with @example
+ * Example of use - with @example
+ * ... more examples
+ */
+```
+
+
+
+### A look at a real example function: `sin()`
+
+Let’s take a look at a real reference comment block for a function from the library - the `sin()` function. You can compare what you see in the comment block below with what you can see on the published [reference page for `sin()`](https://beta.p5js.org/reference/p5/sin/).  
+
+It is very long.  If it is overwhelming, notice that it is 80% made up of example sketches.
+
+The reference comment block for the `sin()` function:
 
 ```js
 /**
@@ -108,40 +171,11 @@ When you look at the source code of p5.js, you will see many lines in the librar
  */
 ```
 
-These reference comments are usually followed by the actual JavaScript code that defines the function. Reference comments always start with `/**` and end with `*/`, with each line in between the two starting with `*`.  
+If you like, you can find the source code for this `sin` function in the p5 repo, [here in /src/math/trigonometry.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/trigonometry.js).  Search for `@method sin` for the start of the comment block (and `fn.sin` for the start of the function code).
 
-Anything in a block in this manner will be interpreted as reference documentation. These follow a format called [JSDoc](https://jsdoc.app/).
+Now we'll look at each section in turn.
 
-In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next.
-
-Note that block comments starting with `/*` rather than `/**` will be _ignored_ and won't be used for the reference (even though they may look otherwise identical in your editor).
-
-Note that p5 v1.x does _not_ use JSDoc syntax but a slightly  modified [syntax called YUIDoc](https://yui.github.io/yuidoc/syntax/index.html).  In practice the syntaxes are largely compatible but there are some differences.  You can read more in [this appendix](#doc-differences-v1-to-v2). We'll focus only on reference comments as they should be written for p5 v2.x.
-
-## Reference comment blocks for functions
-
-In abstract, a comment block for a p5 function typically looks as follows.  (We've included the tags that will mark each section.  The actual syntax will be shown later).
-
-```js
-/**
- * One-line description of the function.
- *
- * More description of the function behavior.
- *
- * The name of function - with @method
- * Details of function parameters - with @param
- * Detail of return value - with @return
- *
- * One or more examples of use - with @example
- */
-```
-
-Let’s break down the reference comment block we saw earlier for the `sin()` function and see what each section does. You can compare what you see in the comment block here with what you can see on the published [reference page for `sin()`](https://beta.p5js.org/reference/p5/sin/).
-
-(You might later also want to look at the most up-to-date source code and documentation comments for `sin` in the p5 repo, [here in /src/math/trigonometry.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/trigonometry.js).  Search for `@method sin` for the start of the comment block and `fn.sin` for the start of the function code.)
-
-
-### Describing the function
+### <a id="@description"></a>Describing the function
 
 Example: 
 
@@ -302,7 +336,7 @@ Here's a cut-down example from the source of [`applyMatrix`](https://github.com/
  * ...
 ```
 
-### `@method` - specifying the function name
+### <a id="@method"></a>`@method` - specifying the function name
 
 [`@method`](https://jsdoc.app/tags-function) is used to define the name of the function, in this case `sin`.  Note that the function name does not include the brackets `()`.  
 
@@ -310,7 +344,7 @@ You may sometimes see this missing from the reference.  In that case JSDoc will 
 
 This tag is also useful when detailing multiple signatures for a function (see later).
 
-### `@param` - specifying details of each parameter
+### <a id="@param"></a>`@param` - specifying details of each parameter
 
 [`@param`](https://jsdoc.app/tags-param) is used to define the parameters or arguments that the function accepts.  It is used once per parameter.
 
@@ -426,7 +460,7 @@ Example:
 * the current <a href="#/p5/angleMode">angleMode()</a>.
 ```
 
-### `@return` - specifying the return value
+### <a id="@return"></a>`@return` - specifying the return value
 
 [`@return`](https://jsdoc.app/tags-returns) is used to define the return value of the function.
 
@@ -643,10 +677,36 @@ Example: the reference comment block for the built-in variable, `mouseX`:
  */
 ```
 
-The start of the block contains the description of the variable (`mouseX` in this case). To define the name of the variable, we use [`@property`](https://jsdoc.app/tags-property) instead of `@method`. `@property` follows the same syntax as `@param` for defining the type and its name. 
+The start of the block contains the description of the variable (`mouseX` in this case).   The same rules apply from function descriptions: Use a clear short first line, you can use markdown and HTML and assets in the description.
+
+### <a id="@property"></a>The `@property` tag
+
+To define the name of the variable, we use [`@property`](https://jsdoc.app/tags-property) instead of `@method`. `@property` follows the same syntax as `@param` for defining the type and its name.
+
+Syntax: 
+```
+@property {type} name
+```
+
+Examples:
+
+From [`src/events/pointer.js`](https://github.com/processing/p5.js/blob/dev-2.0/src/events/pointer.js):
+```
+ * An `Array` of all the current touch points on a touchscreen device.
+ * ...
+ * @property {Object[]} touches
+```
+
+From [`src/image/p5.Image.js`](https://github.com/processing/p5.js/blob/dev-2.0/src/image/p5.Image.js):
+```
+* An array containing the color of each pixel on the canvas.
+* ...
+* @property {Number[]} pixels
+```
+
+### <a id="@readonly"></a>The `@readonly` tag
 
 The `@readonly` tag is present on most p5.js variables and is used internally to indicate this value should not be overwritten directly by a library user.
-
 
 ## Adding examples
 
@@ -699,7 +759,7 @@ Example:
 * arc(50, 50, 80, 80, 0, PI, OPEN);
 * describe('The bottom half of an ellipse created using arc.');
 ```
-### Inserting examples _within_ the description
+### <a id="inserted-examples"></a>Inserting examples _within_ the description
 
 It is possible, and often desirable, to include one or two early runnable examples _within_ the description section, before the main "Examples" section of the page.  (This is particularly useful when a function or class has a lengthy description section.)
 
@@ -808,7 +868,7 @@ For more on `describe()` visit the [web accessibility contributor documentation]
 
 With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usages of JSDoc reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
 
-### `@private` tag
+### <a id="@private"></a>`@private` tag
 
 You can use the `@private` if a property or variable or class is private. If a feature is marked as `@private` it will not be included as part of the rendered reference on the website.  This is done automatically for methods whose names start with `_`.
 
@@ -832,7 +892,7 @@ invert(canvas) {
 
 ### `@module` and related tags
 
-#### `@module` and `@submodule`
+#### <a id="@module"></a>`@module` and `@submodule`
 
 At the top of each source code file will be a comment block with a `@module` tag. A module is a top-level grouping of features in the reference pages on the website.  This does _not_ necessarily correspond to any specific software `module` concept in the code itself.
 
@@ -869,7 +929,7 @@ For both:
  */
 ```
 
-#### The `@for` tag
+#### <a id="@for"></a>The `@for` tag
 
 The `@for` tag defines the relationship between this module and the overall `p5` class, effectively saying this module is a part of the `p5` class.
 
@@ -901,7 +961,7 @@ Example of `@for` and `@requires`
  * @requires constants
  */
 ```
-#### The @beta tag - marking experimental API features
+#### <a id="@beta"></a>The @beta tag - marking experimental API features
 
 This tag is used to mark that a feature is experimental and that its details may change or it may be removed.  A warning will be presented explaining this on the reference page.
 
@@ -923,7 +983,7 @@ It should be placed on a separate line in the comment block and does not need an
    */
 ```
 
-#### The @deprecated tag
+#### <a id="@deprecated"></a>The @deprecated tag
 
 Marks that a feature will be removed from a future version of p5.js, possibly also indicating a better option.
 
@@ -1142,6 +1202,8 @@ npm run custom:cleanup
 * [Run the documentation linter](#linting-the-docs) on your source files.
 * Review the log from the above `custom:dev` process, for mentions of your code.
 * Don't forget that if you're [using local asset files](#using-assets), they'll need to be in the _website_ repo.
+* Note that block comments starting with `/*` rather than `/**` will be _ignored_ and won't be used for the reference (even though they may look otherwise identical in your editor).
+
 
 #### Limitations
 
@@ -1208,20 +1270,47 @@ getRow (r) {
 * If you're curious, you can read about p5.js's [reference generation process](./reference_generation_process/) (but it's not required!)
 * For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). 
 
+## Tags quick reference
+
+Click on any tag to go to its section in the text.
+
+| Tag                           | Usage                            | Notes                                              |
+|-------------------------------|----------------------------------|----------------------------------------------------|
+| [@method](#@method)           | @method name                     | Omitted in certain cases.                          |
+| [@description](#@description) | @description text here           | If omitted, uses first text before _any_ tag.      |
+| [@param](#@param)             | @param \{type\} name Description | Name must match the function parameter.            |
+| [@return](#@return)           | @return \{type\} Description     | Omit type if it returns undefined.                 |
+| [@example](#adding-examples)  | @example Code on next lines...   | Each gets `@example` before and a newline after.   |
+| [\`\`\`js example](#inserted-examples)  | \`\`\`js example       | Insert early examples _within_ the description.    |
+| [@chainable](#@chainable)     | @chainable                       | Instead of `@return`, if it returns same object.   |
+| [@property](#@property)       | @property \{type\} name          | Most p5 variables are properties of p5 class.      | 
+| [@readonly](#@readonly)       | @readonly                        | Mark that a property is not writeable by the user. |
+| [@static](#@static)           | @static                          | Static method or property of a class.              |
+| [@for](#@for)                 | @for className                   | Associate a feature with a class.                  |
+| [@module](#@module)           | @module                          | Groups features for display.                       |
+| [@submodule](#@module)        | @submodule                       | Groups features for display.                       |
+| [@class](#@class)             | @class                           | Marks a class.                                     |
+| [@beta](#@beta)               | @beta                            | Mark an experimental feature.                      |
+| [@deprecated](#@deprecated)   | @deprecated                      | A deprecated feature is intended to be removed.    |
+| [@private](#@private)         | @private                         | Internal details not for publishing.               |
+
+
 ## <a id="doc-differences-v1-to-v2"></a>Appendix: Summary of documentation differences between p5.js v1 and v2
 
 ### Overview: Syntax and tooling per p5.js version
 
 * in p5 v2, documentation comments are:
-  * written in JSDoc syntax
+  * written in [JSDoc syntax](https://jsdoc.app/).
   * processed with a [tool called documentation.js](https://documentation.js.org/).
   * (Some non-JSDoc tags remain in use as the p5 documentation build system is quite customized.)
 
 * in p5 v1, documentation comments are:
-  * written in YUIDoc syntax
+  * written in [YUIDoc syntax](https://yui.github.io/yuidoc/syntax/index.html) (similar)
   * processed with a [tool called YUIDoc](https://yui.github.io/yuidoc/).
 
 ### Syntax differences between YUIDoc and JSDoc
+
+YUIDoc and JSDoc are largely compatible.  Here are some differences.
 
 * YUIDoc requires function names be provided with the `@method` tag, whereas JSDoc can generally extract that information from the implementation source code.
 
