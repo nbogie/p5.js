@@ -1309,16 +1309,16 @@ Click on any tag to go to its section in the text.
 | [@description](#description) | @description text here           | If omitted, uses first text before _any_ tag.      |
 | [@param](#param)             | @param \{type\} name Description | Name must match the function parameter.            |
 | [@return](#return)           | @return \{type\} Description     | Omit type if it returns undefined.                 |
-| [@example](#adding-examples) | @example Code on next lines...   | Each gets `@example` before and a newline after.   |
-| [\`\`\`js example](#inserted-examples)  | \`\`\`js example       | Insert early examples _within_ the description.   |
-| [@chainable](#chaining)      | @chainable                       | Instead of `@return`, if it returns same object.   |
+| [@example](#adding-examples) | @example <br/>//.. example code  | Each gets `@example` before and a newline after.   |
+| [\`\`\`js example](#inserted-examples) | \`\`\`js example<br/>//...<br/>\`\`\` | Insert early examples _within_ the description. |
 | [@property](#property)       | @property \{type\} name          | Most p5 variables are properties of p5 class.      | 
 | [@readonly](#readonly)       | @readonly                        | Mark that a property is not writeable by the user. |
 | [@static](#static)           | @static                          | Static method or property of a class.              |
-| [@for](#for)                 | @for className                   | Associate a feature with a class.                  |
 | [@module](#module)           | @module                          | Groups features for display.                       |
 | [@submodule](#module)        | @submodule                       | Groups features for display.                       |
 | [@class](#class)             | @class                           | Marks a class.                                     |
+| [@for](#for)                 | @for className                   | Associate a feature with a class.                  |
+| [@chainable](#chaining)      | @chainable                       | Instead of `@return`, if it returns same object.   |
 | [@beta](#beta)               | @beta                            | Mark an experimental feature.                      |
 | [@deprecated](#deprecated)   | @deprecated                      | A deprecated feature is intended to be removed.    |
 | [@private](#private)         | @private                         | Internal details not for publishing.               |
