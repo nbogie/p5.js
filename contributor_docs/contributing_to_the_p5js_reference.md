@@ -45,8 +45,8 @@ When you look at the source code of p5.js, you will see many lines in the librar
  * A much longer description normally goes here
  *
  * @method circle
- * @param  {Number} x x-coordinate of centre.
- * @param  {Number} y y-coordinate of centre.
+ * @param {Number} x x-coordinate of centre.
+ * @param {Number} y y-coordinate of centre.
  * @param {Number} diameter Diameter of circle.
  *
  * @example
@@ -651,56 +651,71 @@ The `@readonly` tag is present on most p5.js variables and is used internally to
 
 One tag that is present in both `sin()` and `mouseX`’s reference comments that we have not talked about yet is the [`@example`](https://jsdoc.app/tags-example) tag. This tag is the main way to define each code example to be shown and run when you visit the reference page.
 
-![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](images/reference-screenshot.png)
+Here's an example from the documentation of the `fill()` function.
+
+![Screenshot of the p5.js reference page of the "fill()" function, showing only one code example section.](images/reference-screenshot-example-fill-red.png)
 
 The relevant `@example` tag to create the above is as follows:
 
 ```
- * @example
- * const c = color(255, 204, 0);
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'redValue' to 255.
- * const redValue = red(c);
- * fill(redValue, 0, 0);
- * rect(50, 20, 35, 60);
- * describe(
- *   'Two rectangles with black edges. The rectangle on the left is yellow and the one on the right is red.'
- * );
+* @example
+* function setup() {
+*   createCanvas(100, 100);
+*
+*   background(200);
+*
+*   // A CSS named color.
+*   fill('red');
+*   square(20, 20, 60);
+*
+*   describe('A red square with a black outline.');
+* };
 ```
 
 Generally, each example should be a self-contained complete sketch that will run on the reference website and which could be run directly if pasted into (for example) the web editor.
 
-It should declare `setup()` and `draw()` functions as required.
+It should declare a `setup()` function, and `draw()` if required.
 
 The example’s canvas should be 100x100 pixels.
 
-### About the complexity of examples
-
-The basic principle of writing good example code for the reference is to keep things simple and minimal. The example should be meaningful and explain how the feature works without being too complicated.  
-
-While it may be tempting to make a more interesting, engaging, or "cool" example using other functions (e.g. noise()), or using clever math, that makes it harder for readers to understand.  Try to minimize the pre-requisites necessary for the reader to follow your example.
-
-We won’t go through the details about best practices and code style for the example code here; please see the [reference style guide](https://beta.p5js.org/contribute/documentation_style_guide/), instead.
+If there's no sensible way to present the code usage in a small sketch, you can create an example which doesn't run.  See [norender](#norender).
 
 ### Providing multiple examples
 
 You can have multiple examples for one feature. These should be separated by a blank line and a new @example tag for each.
 
-Example:
+Example (from `createCanvas()`):
 
 ```
-* @example
-* arc(50, 50, 80, 80, 0, PI + QUARTER_PI, OPEN);
-* describe('An ellipse created using an arc with its top right open.');
-*
-* @example
-* arc(50, 50, 80, 80, 0, PI, OPEN);
-* describe('The bottom half of an ellipse created using arc.');
+   * @example
+   * function setup() {
+   *   createCanvas(100, 50);
+   *
+   *   background(200);
+   *
+   *   // Draw a diagonal line.
+   *   line(0, 0, width, height);
+   *
+   *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
+   * }
+   *
+   * @example
+   * // Use WebGL mode.
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Draw a diagonal line.
+   *   line(-width / 2, -height / 2, width / 2, height / 2);
+   *
+   *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
+   * }
 ```
+
 ### <a id="inserted-examples"></a>Inserting examples _within_ the description
 
-It is possible, and often desirable, to include one or two early runnable examples _within_ the description section, before the main "Examples" section of the page.  (This is particularly useful when a function or class has a lengthy description section.)
+It is possible, and often desirable, to include early runnable examples _within_ the description section, before the main "Examples" section of the page.  This is particularly useful when a function or class has a lengthy and detailed description section.
 
 The <a href="https://beta.p5js.org/reference/p5/image/">p5.Image reference</a> has a good example of this. ([Source here](https://github.com/processing/p5.js/blob/6a61f7fb3055969fe53d9f82027f891d245b3e9f/src/webgl/material.js#L597)).
 
@@ -718,15 +733,23 @@ To add such an example, instead of using an `@example` tag, surround the example
 To make the code-block, surround your example code before and after by three backticks on a newline.
 The opening backticks should be immediately followed by the annotation `js example`.  Remember, you should not use an `@example` tag in this case.
 
-**Why is this important?**
+Why is this important?
 
 Early examples like this allow the reader to quickly play with, and get an early understanding of, a p5.js feature _without_ having to read or scroll through possibly overwhelming amounts of documentation discussing in-depth details of the feature.
 
+### About the complexity of code examples
+
+The basic principle of writing good example code for the reference is to keep things simple and minimal. The example should be meaningful and explain how the feature works without being too complicated.  
+
+While it may be tempting to make a more interesting, engaging, or "cool" example using other functions (e.g. noise()), or using clever math, that makes it harder for readers to understand.  Try to minimize the number of concepts used in your example.
+
+We won’t go through the details about best practices and code style for the example code here; please see the [reference style guide](https://beta.p5js.org/contribute/documentation_style_guide/), instead.
+
 ### When examples omit setup()
 
-If the `setup()` function is not included, such as in the example above, the code will be automatically wrapped in a `setup()` function with a default 100x100 pixels gray background canvas created.  While you will see such examples included in this guide for brevity, it is generally preferred that your example be a complete sketch.
+If the `setup()` function is not included, such as in the example above, the code will be automatically wrapped in a `setup()` function with a default 100x100 pixels gray background canvas created.  While you may see such examples included in this guide for brevity, it is generally preferred that your example be a complete sketch.  This makes it easier for learners to see the intended usage in full context and copy-paste to get a complete runnable example in their own editor.
 
-### Preventing execution of example code with `norender`
+### <a id="norender"></a>Preventing execution of example code with `norender`
 
 If you do not want the reference page to run an example's code (i.e., you only want the _code_ to be shown, not its result), follow the `@example` tag with `// META:norender` on the next line:
 
@@ -757,9 +780,9 @@ font = await loadFont('assets/inconsolata.otf');
 ```
 The above code will load the font file, [/public/assets/inconsolata.otf](https://github.com/processing/p5.js-website/blob/2.0/public/assets/inconsolata.otf), stored in the p5.js-website repo.
 
-### Asset hosting differs from p5 v1
+#### Asset hosting differs from p5 v1
 
-Note that this hosting location is a significant change from p5 v1.x where such assets were stored instead in the _p5.js_ repo.
+Note that hosting in the _p5.js-website repo_ is a significant change from p5 v1.x where such assets were stored instead in the _p5.js_ repo.
 
 ### Re-using existing assets
 
@@ -1241,14 +1264,12 @@ This will produce _lots_ of warnings, across many files!  These do not necessari
 
 However, you can look through for any warnings relating to the file _you_ are working on, to see if anything stands out.  (e.g. a misspelled tag, mismatching parameter name, or "Unknown content")
 
-**Example of a minor issue found by the linter:**
+### Example of a minor issue found by the linter
 
 ```
 /path/to/p5.js/src/io/p5.TableRow.js
 153:1  warning  An explicit parameter named rowID was specified but didn't match inferred information r
 ```
-
-**Explanation: **
 
 The above warning says that there's a problem:
 
